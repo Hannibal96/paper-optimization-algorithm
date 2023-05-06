@@ -1,0 +1,638 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Examples
+\end_layout
+
+\begin_layout Standard
+In this section we will show usages of our theoretical results and verify
+ them on known data sets.
+\end_layout
+
+\begin_layout Subsection
+Example - Using the prior knowledge
+\end_layout
+
+\begin_layout Standard
+First we are going to demonstrate the differences between the pure regret
+ using mere PCA vs our results that use the prior knowledge embodied in
+ 
+\begin_inset Formula $\mathcal{S}.$
+\end_inset
+
+ We randomly define a positive defined matrix 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ and we limit 
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+ to be diagonal with trace=
+\begin_inset Formula $d$
+\end_inset
+
+.
+ We define two skew matrices, linear and exponential such that: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S_{i}^{linear}=S_{i-1}^{linear}+f^{linear}(skew)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S_{i}^{exp}=S_{i-1}^{exp}\cdot f^{exp}(skew)
+\]
+
+\end_inset
+
+Our goal is to show the difference between 
+\begin_inset Formula $R=V_{1:r}\left[\Sigma\right]$
+\end_inset
+
+ and 
+\begin_inset Formula $R^{*}=V_{1:r}\left[\Sigma^{\frac{1}{2}}\mathcal{S}\Sigma^{\frac{1}{2}}\right]$
+\end_inset
+
+ in the achieved theoretical pure regret.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Exponential Skew.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Linear Skew.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As shown the higher the skew of the eigen values of 
+\begin_inset Formula $\mathcal{S}$
+\end_inset
+
+ the higher the difference in the achieved regrets.
+\end_layout
+
+\begin_layout Section
+Algorithm
+\end_layout
+
+\begin_layout Subsection
+Regression
+\end_layout
+
+\begin_layout Standard
+Second we will test the results of the described algorithm, since the range
+ of the value of the regret can vary we will be interested in the ratio
+ between the theoretical regret and the achieved regret by the algorithm,
+ and for symmetry we will also apply logarithm.
+ As shown in the graphs below, we have a plot of: 
+\begin_inset Formula $\log\left(\frac{theoretical-reget}{algorithm-reget}\right)$
+\end_inset
+
+ with confidence bounds calculated over 10 runs.
+ We tested 3 parameters:
+\begin_inset Formula $d,r,var$
+\end_inset
+
+ where 
+\begin_inset Formula $var$
+\end_inset
+
+ is the variance of the Gaussian random variable that draw the eigen values
+ of 
+\begin_inset Formula $\Sigma_{x}$
+\end_inset
+
+.
+ The hyper parameters such as the learning rate and 
+\begin_inset Formula $\beta$
+\end_inset
+
+ was chosen using hyper parameters optimization optimized over 
+\begin_inset Formula $d=20,r=3$
+\end_inset
+
+ as seem in Fig.3 the accuracy of the results generalize relatively well.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=10_LogRatio_vs_d-worst.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_LogRatio_vs_r-worst.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=10_LogRatio_vs_Variance-worst.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+Form the plots we can see that the biggest deviation from the theory is
+ when 
+\begin_inset Formula $r$
+\end_inset
+
+ is getting bigger, this is caused duo to 
+\begin_inset Formula $l^{*}$
+\end_inset
+
+getting bigger and with that more numeric errors.
+ In addition we can plot the regret as the number of iteration and representatio
+n matrices we use.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_Regrets_vs_Iteration-r_avg.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In addition we can plot the regret over the number of iterations, apart
+ from some noise and numeric errors, we can see that the regret is getting
+ lower with the number of representation matrices used until it's reach
+ a saturation point which consist with the theory.
+\end_layout
+
+\begin_layout Subsection
+Neural Network
+\end_layout
+
+\begin_layout Subsubsection
+Linear
+\end_layout
+
+\begin_layout Subsubsection
+Non-Linear
+\end_layout
+
+\begin_layout Subsection
+Classification
+\end_layout
+
+\begin_layout Standard
+We now turn to use the idea of using prior knowledge for classification
+ tasks.
+ We will define data set with binary classification using by: 
+\begin_inset Formula $y_{i}\left(x\right)=\frac{1}{1+e^{-f^{T}x_{i}}},f\in\mathcal{F}$
+\end_inset
+
+ and logistic regression on the compressed data in various methods.
+ Using our algorithm we can find 
+\begin_inset Formula $f^{*}$
+\end_inset
+
+ and 
+\begin_inset Formula $o^{*}$
+\end_inset
+
+ which define the worst case of functions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename worst-f_m=10_t=5_logistic_regression_regrets.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Experiments 
+\end_layout
+
+\begin_layout Section
+Appendix
+\end_layout
+
+\begin_layout Subsection
+Classification
+\end_layout
+
+\begin_layout Standard
+For this section we append the calculation of the gradients for the classificati
+on subsection.
+ As described we assume that the labels comes from a function depending
+ on 
+\begin_inset Formula $f$
+\end_inset
+
+ which is 
+\begin_inset Formula $y_{i}\left(x\right)=\frac{1}{1+e^{-f^{T}x_{i}}},f\in\mathcal{F}$
+\end_inset
+
+.
+ Further, the loss of logistic regression is: 
+\begin_inset Formula $loss=\frac{1}{m}\sum_{i=1}^{m}\log\left(1+e^{-y_{i}w^{T}x_{i}}\right)$
+\end_inset
+
+, since in our setting we use the compressed representation of 
+\begin_inset Formula $x$
+\end_inset
+
+ note by 
+\begin_inset Formula $R$
+\end_inset
+
+ our loss is: 
+\begin_inset Formula $loss=\frac{1}{m}\sum_{i=1}^{m}\log\left(1+e^{-y_{i}w^{T}R\left(x_{i}\right)}\right)$
+\end_inset
+
+.
+ Thus we can calculate:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{d}{dw}loss=-\frac{1}{m}\sum_{i=1}^{m}\frac{1}{1+e^{y_{i}w^{T}R\left(x_{i}\right)}}y_{i}R\left(x_{i}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{d}{dR}loss=-\frac{1}{m}\sum_{i=1}^{m}\frac{1}{1+e^{y_{i}w^{T}R\left(x_{i}\right)}}y_{i}x_{i}w^{T}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{d}{df}loss= & \frac{1}{m}\sum_{i=1}^{m}\frac{d}{df}\left(\log\left(1+e^{-\frac{w^{T}R\left(x_{i}\right)}{1+e^{-f^{T}x_{i}}}}\right)\right)=\frac{1}{m}\sum_{i=1}^{m}\frac{1}{1+e^{\frac{w^{T}R\left(x_{i}\right)}{1+e^{-f^{T}x_{i}}}}}\frac{d}{df}\left(-\frac{w^{T}R\left(x_{i}\right)}{1+e^{-f^{T}x_{i}}}\right)\\
+= & \frac{1}{m}\sum_{i=1}^{m}\frac{-w^{T}R\left(x_{i}\right)}{1+e^{\frac{w^{T}R\left(x_{i}\right)}{1+e^{-f^{T}x_{i}}}}}\left(1+e^{-f^{T}x_{i}}\right)^{-2}\left(-1\right)e^{-f^{T}x_{i}}\left(-x_{i}\right)\\
+= & \frac{1}{m}\sum_{i=1}^{m}\frac{w^{T}R\left(x_{i}\right)}{1+e^{\frac{w^{T}R\left(x_{i}\right)}{1+e^{-f^{T}x_{i}}}}}\frac{e^{-f^{T}x_{i}}}{\left(1+e^{-f^{T}x_{i}}\right)^{2}}\left(-x_{i}\right)
+\end{align*}
+
+\end_inset
+
+ When we deal with loss that take into account mixed strategy our loss will
+ look like:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Loss= & \sum_{k}\sum_{l}p_{k}o_{l}\left(\frac{1}{m}\sum_{i=1}^{m}\log\left(1+e^{-y_{i}^{\left(l\right)}w_{kl}^{T}R^{\left(k\right)}\left(x_{i}\right)}\right)\right)
+\end{align*}
+
+\end_inset
+
+ We can calculate the gradients using the above derivations:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{d}{df^{\left(a\right)}}Loss= & \sum_{k}p_{k}o_{a}\frac{d}{df^{\left(a\right)}}\left(\frac{1}{m}\sum_{i=1}^{m}\log\left(1+e^{-y_{i}^{\left(a\right)}w_{kl}^{T}R^{\left(k\right)}\left(x_{i}\right)}\right)\right)\\
+= & o_{a}\sum_{k}p_{k}\left(\frac{1}{m}\sum_{i=1}^{m}\frac{w^{T}R^{\left(k\right)}\left(x_{i}\right)}{1+e^{\frac{w^{T}R^{\left(k\right)}\left(x_{i}\right)}{1+e^{-f_{a}^{T}x_{i}}}}}\frac{e^{-f_{a}^{T}x_{i}}}{\left(1+e^{-f_{a}^{T}x_{i}}\right)^{2}}\left(-x_{i}\right)\right)
+\end{align*}
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\frac{d}{dR^{\left(b\right)}}Loss= & \sum_{l}p_{b}o_{l}\frac{d}{dR^{\left(b\right)}}\left(\frac{1}{m}\sum_{i=1}^{m}\log\left(1+e^{-y_{i}^{\left(a\right)}w_{kl}^{T}R^{\left(b\right)}\left(x_{i}\right)}\right)\right)\\
+= & \sum_{l}p_{b}o_{l}\left(-\frac{1}{m}\sum_{i=1}^{m}\frac{1}{1+e^{y_{i}w^{T}R\left(x_{i}\right)}}y_{i}x_{i}w^{T}\right)
+\end{align*}
+
+\end_inset
+
+ 
+\end_layout
+
+\end_body
+\end_document
