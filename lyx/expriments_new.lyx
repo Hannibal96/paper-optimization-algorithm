@@ -177,14 +177,14 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../../../../Desktop/masters/thesis material/Paper code and lyx/lyx/Exponential Skew.png
+	filename Exponential Skew.png
 	scale 50
 
 \end_inset
 
 
 \begin_inset Graphics
-	filename ../../../../Desktop/masters/thesis material/Paper code and lyx/lyx/Linear Skew.png
+	filename Linear Skew.png
 	scale 50
 
 \end_inset
@@ -234,10 +234,9 @@ Regression
 \begin_layout Standard
 Second we will test the results of the described algorithm, since the range
  of the value of the regret can vary we will be interested in the ratio
- between the theoretical regret and the achieved regret by the algorithm,
- and for symmetry we will also apply logarithm.
+ between the theoretical regret and the achieved regret by the algorithm.
  As shown in the graphs below, we have a plot of: 
-\begin_inset Formula $\log\left(\frac{theoretical-reget}{algorithm-reget}\right)$
+\begin_inset Formula $\frac{theoretical-reget}{algorithm-reget}$
 \end_inset
 
  with confidence bounds calculated over 10 runs.
@@ -260,7 +259,7 @@ Second we will test the results of the described algorithm, since the range
 \end_inset
 
  was chosen using hyper parameters optimization optimized over 
-\begin_inset Formula $d=20,r=3$
+\begin_inset Formula $d=20,r=3,\sigma_{0}=3$
 \end_inset
 
  the hyper parameters values is detailed in Table 
@@ -305,7 +304,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../../../../Desktop/masters/thesis material/Paper code and lyx/lyx/sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_Regrets_vs_Iteration-r_avg.png
+	filename Regret_vs_Iteration.png
 	scale 75
 
 \end_inset
@@ -314,7 +313,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Regret vs number of representation matrices 
+Regret vs number of representation matrices for MSE 
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:basdfasdf"
@@ -343,21 +342,21 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../../../../Desktop/masters/thesis material/Paper code and lyx/lyx/sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=10_LogRatio_vs_d-worst.png
+	filename results_accuracy_ratio_d_5-20-1.png
 	scale 40
 
 \end_inset
 
 
 \begin_inset Graphics
-	filename ../../../../Desktop/masters/thesis material/Paper code and lyx/lyx/sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_LogRatio_vs_r-worst.png
+	filename results_accuracy_ratio_r_1-10-1.png
 	scale 40
 
 \end_inset
 
 
 \begin_inset Graphics
-	filename ../../../../Desktop/masters/thesis material/Paper code and lyx/lyx/sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=10_LogRatio_vs_Variance-worst.png
+	filename results_accuracy_ratio_sigma0_0.5-7.0-0.5.png
 	scale 40
 
 \end_inset
@@ -443,7 +442,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../../../../Desktop/masters/thesis material/Paper code and lyx/lyx/sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_Regrets_vs_Iteration-r_avg.png
+	filename log-reg_reg-vs-iter_d=15_r=3_b=100.png
 	scale 50
 
 \end_inset
@@ -452,10 +451,65 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-basdfasdf 
+Regret vs number of representation matrices for log loss 
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:basdfasdf-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename reg-vs-d_r=3_b=100.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Plot of the obtained regret by the algorithm for various scenarios under
+ log loss.
+ Left: Varying 
+\begin_inset Formula $d$
+\end_inset
+
+.
+ Middle: Varying 
+\begin_inset Formula $r$
+\end_inset
+
+.
+ Right: Varying the variance of 
+\begin_inset Formula $\sigma_{0}^{2}$
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: theory-alg for MSE-1"
 
 \end_inset
 
@@ -666,7 +720,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.816$
+\begin_inset Formula $0.988$
 \end_inset
 
 
@@ -692,7 +746,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.524$
+\begin_inset Formula $0.704$
 \end_inset
 
 
@@ -718,7 +772,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.56$
+\begin_inset Formula $0.714$
 \end_inset
 
 
@@ -744,7 +798,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.565$
+\begin_inset Formula $0.624$
 \end_inset
 
 
@@ -819,7 +873,7 @@ until convergence
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $20$
+\begin_inset Formula $50$
 \end_inset
 
 
@@ -845,7 +899,7 @@ until convergence
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $60$
+\begin_inset Formula $50$
 \end_inset
 
 

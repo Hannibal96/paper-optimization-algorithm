@@ -9,7 +9,7 @@ def project_f(f, S):
     return f / np.linalg.norm(matrix_power(A=S, p=-0.5) @ f)
 
 
-def find_final_f(sigma, S, R, p, lr, tol=1e-4):
+def find_final_f(sigma, S, R, p, lr, tol=1e-4, T=10_000):
     d = sigma.shape[0]
     f_new = np.random.randn(d, 1)
     f_new = project_f(f=f_new, S=S)

@@ -19,11 +19,14 @@ def loss(x, R, f, q):
 def find_q(x, R, f, lr, tol=1e-3):
     r = R.shape[1]
     q = np.random.randn(r, 1)
-    while True:
+
+    for t in range(1_000_000):
         q_g = q_grad(x=x, q=q, R=R, f=f)
         q = q - lr * q_g
         if np.linalg.norm(q_g) < tol:
             break
+        if (t+1) % 10_000 == 0:
+            lr = lr/2
     return q
 
 

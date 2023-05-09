@@ -17,7 +17,8 @@ def find_f(x, R, p, lr, T=1000, tol=1e-3):
     d = x.shape[1]
     f = np.random.randn(d, 1)
     f_prev = f.copy()
-    for t in tqdm(range(T)):
+    #for t in tqdm(range(T)):
+    for t in range(T):
         Q = find_Q(x=x, R=R, f=[f], lr=lr, tol=tol)
         f_g = f_grad(x=x, R=R, f=f, p=p, Q=Q[:, 0])
         f = f + lr * f_g
@@ -47,7 +48,8 @@ def find_R(x, R, f, T, lr_r, lr_f, beta1, beta2, avg_frac, stop_frac, tol=1e-3):
     R_pool.append(new_R)
     Q = find_Q(x=x, R=R_pool, f=f, lr=lr_f, tol=tol)
 
-    for t in tqdm(range(T)):
+    #for t in tqdm(range(T)):
+    for t in range(T):
         new_R = new_R - lr_r * R_grad(x=x, Q=Q[-1, :], R=new_R, f=f, o=o)
 
         R_pool[-1] = new_R

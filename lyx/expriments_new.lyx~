@@ -234,10 +234,9 @@ Regression
 \begin_layout Standard
 Second we will test the results of the described algorithm, since the range
  of the value of the regret can vary we will be interested in the ratio
- between the theoretical regret and the achieved regret by the algorithm,
- and for symmetry we will also apply logarithm.
+ between the theoretical regret and the achieved regret by the algorithm.
  As shown in the graphs below, we have a plot of: 
-\begin_inset Formula $\log\left(\frac{theoretical-reget}{algorithm-reget}\right)$
+\begin_inset Formula $\frac{theoretical-reget}{algorithm-reget}$
 \end_inset
 
  with confidence bounds calculated over 10 runs.
@@ -260,10 +259,28 @@ Second we will test the results of the described algorithm, since the range
 \end_inset
 
  was chosen using hyper parameters optimization optimized over 
-\begin_inset Formula $d=20,r=3$
+\begin_inset Formula $d=20,r=3,\sigma_{0}=3$
 \end_inset
 
- as seem in Fig.
+ the hyper parameters values is detailed in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab1: MSE experiments hyper parameters"
+
+\end_inset
+
+.
+ First we test the regret as a function of the number of representation
+ matrices in Fig.
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:basdfasdf"
+
+\end_inset
+
+.
+ Later we test the accuracy of the algorithm vs the theoretical regret over
+ different combinations of the problem parameters, as seem in Fig.
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -287,8 +304,8 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_Regrets_vs_Iteration-r_avg.png
-	scale 50
+	filename Regret_vs_Iteration.png
+	scale 75
 
 \end_inset
 
@@ -296,7 +313,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-basdfasdf 
+Regret vs number of representation matrices for MSE 
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:basdfasdf"
@@ -325,22 +342,22 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=10_LogRatio_vs_d-worst.png
-	scale 50
+	filename results_accuracy_ratio_d_5-20-1.png
+	scale 40
 
 \end_inset
 
 
 \begin_inset Graphics
-	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_LogRatio_vs_r-worst.png
-	scale 50
+	filename results_accuracy_ratio_r_1-10-1.png
+	scale 40
 
 \end_inset
 
 
 \begin_inset Graphics
-	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=10_LogRatio_vs_Variance-worst.png
-	scale 50
+	filename results_accuracy_ratio_sigma0_0.5-7.0-0.5.png
+	scale 40
 
 \end_inset
 
@@ -352,7 +369,7 @@ status open
 
 \begin_layout Plain Layout
 A comparison between theoretical regret and regret obtained by Algorithm
- ??? for various scenarios.
+ for various scenarios.
  Left: Varying 
 \begin_inset Formula $d$
 \end_inset
@@ -364,7 +381,7 @@ A comparison between theoretical regret and regret obtained by Algorithm
 
 .
  Right: Varying the variance of 
-\begin_inset Formula $\Sigma_{\boldsymbol{x}}$
+\begin_inset Formula $\sigma_{0}^{2}$
 \end_inset
 
 .
@@ -397,13 +414,7 @@ Form the plots we can see that the biggest deviation from the theory is
  getting bigger and with that more numeric errors.
  In addition we can plot the regret as the number of iteration and representatio
 n matrices we use.
-\end_layout
-
-\begin_layout Standard
-In addition we can plot the regret over the number of iterations, apart
- from some noise and numeric errors, we can see that the regret is getting
- lower with the number of representation matrices used until it's reach
- a saturation point which consist with the theory.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -431,7 +442,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename sigma=matrix_type.DIAG_s=matrix_type.IDENTITY_m=20_Regrets_vs_Iteration-r_avg.png
+	filename log-reg_reg-vs-iter_d=15_r=3_b=100.png
 	scale 50
 
 \end_inset
@@ -440,10 +451,64 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-basdfasdf 
+Regret vs number of representation matrices for log loss 
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:basdfasdf-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename reg-vs-d_r=3_b=100.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Plot of the obtained regret by the algorithm for various scenarios under
+ log loss.
+ Left: Varying 
+\begin_inset Formula $d$
+\end_inset
+
+.
+ Middle: Varying 
+\begin_inset Formula $r$
+\end_inset
+
+.
+ Right: Varying the variance of 
+\begin_inset Formula $\sigma_{0}^{2}$
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: theory-alg for MSE-1"
 
 \end_inset
 
@@ -473,6 +538,12 @@ Regression-hyper parameters details
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="14" columns="2">
@@ -648,7 +719,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.816$
+\begin_inset Formula $0.988$
 \end_inset
 
 
@@ -674,7 +745,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.524$
+\begin_inset Formula $0.704$
 \end_inset
 
 
@@ -700,7 +771,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.56$
+\begin_inset Formula $0.714$
 \end_inset
 
 
@@ -726,7 +797,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $0.565$
+\begin_inset Formula $0.624$
 \end_inset
 
 
@@ -778,7 +849,7 @@ Initialization
 \begin_inset Text
 
 \begin_layout Plain Layout
-until convergence 
+until convergence
 \end_layout
 
 \end_inset
@@ -801,7 +872,7 @@ until convergence
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $20$
+\begin_inset Formula $50$
 \end_inset
 
 
@@ -827,7 +898,7 @@ until convergence
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $60$
+\begin_inset Formula $50$
 \end_inset
 
 
@@ -837,6 +908,26 @@ until convergence
 </cell>
 </row>
 </lyxtabular>
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab1: MSE experiments hyper parameters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -859,6 +950,12 @@ reference "fig:basdfasdf-1"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="14" columns="2">
@@ -916,7 +1013,7 @@ Gaussian
 \begin_inset Formula ${\cal R}$
 \end_inset
 
- 
+
 \end_layout
 
 \end_inset
@@ -1206,6 +1303,29 @@ Initialization
 </cell>
 </row>
 </lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab 2: Logistic Regression experiments hyper parameters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
