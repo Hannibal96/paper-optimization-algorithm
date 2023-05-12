@@ -9,7 +9,7 @@ def project_f(f, S):
     return f / np.linalg.norm(matrix_power(A=S, p=-0.5) @ f)
 
 
-def find_final_f(sigma, S, R, p, lr, tol=1e-4, T=10_000):
+def find_final_f(sigma, S, R, p, lr, tol=1e-3):
     d = sigma.shape[0]
     f_new = np.random.randn(d, 1)
     f_new = project_f(f=f_new, S=S)
@@ -20,7 +20,7 @@ def find_final_f(sigma, S, R, p, lr, tol=1e-4, T=10_000):
         pg_f = partial_grad_f(sigma=sigma, f_i=f_new, R=R, p=p, Q_i=Q[:, 0])
         f_new = f_new + lr * pg_f
         f_new = project_f(f=f_new, S=S)
-        if np.linalg.norm(f_new - f_prev) < tol:
+        if np.linalg.norm((f_new - f_prev) / lr) < tol:
             break
         else:
             f_prev = f_new.copy()
@@ -165,6 +165,9 @@ def run_algorithm(d, r, m, sigma_type, s_type, times, d_sigma, T_r,
     for i in range(times):
 
         sigma = get_pdm(d=d, type=sigma_type) ** d_sigma
+        sigma /= np.trace(sigma)
+        sigma *= d
+
         S = get_pdm(d=d, type=s_type)
 
         S_half = matrix_power(A=S, p=0.5)

@@ -97,3 +97,24 @@ def calc_loss_matrix(x, R, Q, f):
             q_ji = Q[j, i]
             losses_matrix[j, i] = loss(x=x, R=R_j, f=f_i, q=q_ji)
     return losses_matrix
+
+
+def plot_and_save(x_axis, mean_regrets, std_regrets,
+          label_char, labels_val, x_label, y_label, title, name):
+    plt.grid()
+    for i in range(mean_regrets.shape[0]):
+        plt.plot(x_axis, mean_regrets[i], label=label_char+f"={labels_val[i]}")
+        plt.fill_between(x_axis, mean_regrets[i]-std_regrets[i], mean_regrets[i]+std_regrets[i],
+                         color='r', alpha=0.5)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.legend()
+    plt.savefig(f"{name}.png")
+    plt.clf()
+
+    pickle.dump(mean_regrets, open(f'{name}_mean.p', 'wb'))
+    pickle.dump(std_regrets, open(f'{name}_std.p', 'wb'))
+
+
+
