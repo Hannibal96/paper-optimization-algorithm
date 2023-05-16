@@ -126,9 +126,6 @@ consist of two linear layers of sizes
 \end_inset
 
  activation in the middle.
- We show the regret achieved by the algorithm vs the number of representation
- functions, which shows decrease of the regret when the number of functions
- increases.
 \end_layout
 
 \begin_layout Standard
@@ -138,16 +135,11 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-\align center
-\begin_inset Caption Standard
 
-\begin_layout Plain Layout
-Parameters for neural network cross entropy setting sample
 \end_layout
 
-\end_inset
-
-
+\begin_layout Plain Layout
+\align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="5">
 <features tabularvalignment="middle">
@@ -265,10 +257,7 @@ Parameters for neural network cross entropy setting sample
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $10^{-1}$
-\end_inset
-
-
+1
 \end_layout
 
 \end_inset
@@ -424,7 +413,7 @@ Parameters for neural network cross entropy setting sample
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathcal{R}$
+\begin_inset Formula $\beta_{r}$
 \end_inset
 
 
@@ -436,7 +425,7 @@ Parameters for neural network cross entropy setting sample
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathcal{Q}$
+\begin_inset Formula $\beta_{f}$
 \end_inset
 
 
@@ -448,7 +437,7 @@ Parameters for neural network cross entropy setting sample
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\mathcal{F}$
+\begin_inset Formula $\eta_{r}$
 \end_inset
 
 
@@ -460,7 +449,10 @@ Parameters for neural network cross entropy setting sample
 \begin_inset Text
 
 \begin_layout Plain Layout
-Activation
+\begin_inset Formula $\eta_{f}$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -471,7 +463,7 @@ Activation
 \begin_inset Text
 
 \begin_layout Plain Layout
-See above
+0.9
 \end_layout
 
 \end_inset
@@ -480,7 +472,7 @@ See above
 \begin_inset Text
 
 \begin_layout Plain Layout
-See above
+0.9
 \end_layout
 
 \end_inset
@@ -489,7 +481,10 @@ See above
 \begin_inset Text
 
 \begin_layout Plain Layout
-See above
+\begin_inset Formula $10^{-3}$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -498,7 +493,7 @@ See above
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $Relu$
+\begin_inset Formula $10^{-1}$
 \end_inset
 
 
@@ -508,6 +503,15 @@ See above
 </cell>
 </row>
 </lyxtabular>
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
 
 \end_inset
 
@@ -539,19 +543,9 @@ status open
 
 \begin_layout Plain Layout
 \align center
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Hardware details
-\end_layout
-
-\end_inset
-
-
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="3">
+<lyxtabular version="3" rows="4" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -559,16 +553,7 @@ Hardware details
 \begin_inset Text
 
 \begin_layout Plain Layout
-CPU
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RAM
+Component
 \end_layout
 
 \end_inset
@@ -577,7 +562,47 @@ RAM
 \begin_inset Text
 
 \begin_layout Plain Layout
-GPU
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CPU
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+intel i9 13900k
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RAM
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+64GB
 \end_layout
 
 \end_inset
@@ -588,16 +613,7 @@ GPU
 \begin_inset Text
 
 \begin_layout Plain Layout
-intel i9 13900k
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-64GB
+GPU
 \end_layout
 
 \end_inset
@@ -606,7 +622,7 @@ intel i9 13900k
 \begin_inset Text
 
 \begin_layout Plain Layout
-RTX 3090 Ti
+rtx 3090 Ti
 \end_layout
 
 \end_inset
@@ -616,6 +632,19 @@ RTX 3090 Ti
 
 \end_inset
 
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
 
 \end_layout
 

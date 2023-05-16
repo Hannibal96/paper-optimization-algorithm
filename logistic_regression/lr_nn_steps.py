@@ -7,7 +7,7 @@ import copy
 device = torch.device('cpu')
 
 
-def find_Q(r, x, R, f, lr, tol=1e-4, T=1_000_000):
+def find_Q(r, x, R, f, lr, tol=1e-4, T=100):
     Q = {}
     for j, r_nn in enumerate(R):
         for i, f_nn in enumerate(f):
@@ -15,25 +15,26 @@ def find_Q(r, x, R, f, lr, tol=1e-4, T=1_000_000):
     return Q
 
 
-def find_f(lr, R, p, x, tol=1e-4, T=10_000):
-    r = R[0].linear_layer.weight.shape[0]
-    d = R[0].linear_layer.weight.shape[1]
+def find_f(lr, R, p, x, tol=1e-4, T=1000):
+    d = R[0].linear_layer_1.weight.shape[0]
+    r = R[0].linear_layer_2.weight.shape[0]
+
     f_nn = F_nn(d=d).to(device)
     optimizer = torch.optim.SGD(f_nn.parameters(), lr=lr)
-    prev_weights = f_nn.linear_layer.weight.clone()
+    #prev_weights = f_nn.linear_layer.weight.clone()
 
     for t in range(T):
-        Q = find_Q(r=r, x=x, R=R, f=[f_nn], lr=lr, tol=1e-4, T=1_000_000)
+        Q = find_Q(r=r, x=x, R=R, f=[f_nn], lr=lr, tol=1e-4, T=100)
         f_loss = -regret(x=x, R=R, p=p, f=[f_nn], o=torch.ones(1), Q=Q)
         optimizer.zero_grad()
         f_loss.backward()
         optimizer.step()
-        with torch.no_grad():
+        """with torch.no_grad():
             f_nn.linear_layer.weight /= torch.linalg.norm(f_nn.linear_layer.weight)
         if torch.linalg.norm(f_nn.linear_layer.weight - prev_weights) < tol:
             break
         else:
-            prev_weights = f_nn.linear_layer.weight.clone()
+            prev_weights = f_nn.linear_layer.weight.clone()"""
 
     reg = regret(x=x, R=R, p=p, f=[f_nn], o=torch.ones(1), Q=Q)
     return f_nn, reg
@@ -46,8 +47,8 @@ def find_R(x, R, f,
     R_pool = R[:]
     T_stop = T - T // stop_frac
     T_avg = T // avg_frac
-    d = R[0].linear_layer.weight.shape[1]
-    r = R[0].linear_layer.weight.shape[0]
+    d = R[0].linear_layer_1.weight.shape[0]
+    r = R[0].linear_layer_2.weight.shape[0]
 
     o = torch.ones([len(f), 1], requires_grad=False).to(device) / len(f)
     p = torch.ones([len(R_pool) + 1, 1], requires_grad=False).to(device) / (len(R_pool) + 1)
@@ -67,7 +68,7 @@ def find_R(x, R, f,
         optimizer.step()
 
         R_pool[-1] = r_nn
-        new_Q = find_Q(r=r, x=x, R=[r_nn], f=f, lr=lr_f, tol=tol, T=1_000_000)
+        new_Q = find_Q(r=r, x=x, R=[r_nn], f=f, lr=lr_f, tol=tol, T=100)
         for i in range(len(f)):
             Q[(len(R_pool)-1, i)] = new_Q[(0, i)]
 
@@ -90,7 +91,8 @@ def init_R0_f0(x, r, lr_f, T_f, tol=1e-3):
     d = x[0].shape[1]
     R0 = R_nn(d=d, r=r).to(device)
     with torch.no_grad():
-        R0.linear_layer.weight *= 0
+        R0.linear_layer_1.weight *= 0
+        R0.linear_layer_2.weight *= 0
     f0, reg = find_f(lr=lr_f, R=[R0], p=torch.ones(1), x=x, tol=tol, T=T_f)
     return f0, R0, reg
 
