@@ -1,6 +1,11 @@
 import numpy as np
 
 
+def matrix_power(A, p):
+    D, U = np.linalg.eig(A)
+    return U @ (np.diag(D**p)) @ U.T
+
+
 def regret(x, R, p, f, o, Q):
     regret = 0
     for j, R_j in enumerate(R):

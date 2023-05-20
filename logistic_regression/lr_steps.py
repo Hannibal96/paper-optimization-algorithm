@@ -1,5 +1,5 @@
 import numpy as np
-from tqdm import tqdm
+import tqdm
 from lr_utils import *
 
 
@@ -13,7 +13,7 @@ def find_Q(x, R, f, lr, tol=1e-3):
     return Q
 
 
-def find_f(x, R, p, lr, T=1000, tol=1e-3):
+def find_f(x, R, S, p, lr, T=1000, tol=1e-3):
     d = x.shape[1]
     f = np.random.randn(d, 1)
     f_prev = f.copy()
@@ -25,7 +25,8 @@ def find_f(x, R, p, lr, T=1000, tol=1e-3):
         if np.linalg.norm(f - f_prev) < tol:
             break
         if np.linalg.norm(f) > 1:
-            f = f / np.linalg.norm(f)
+            f = f / np.linalg.norm(matrix_power(A=S, p=-0.5) @ f)
+
         f_prev = f.copy()
     reg = regret(x=x, R=R, p=p, f=[f], o=np.ones(1), Q=Q)
     return f, reg
@@ -69,27 +70,27 @@ def find_R(x, R, f, T, lr_r, lr_f, beta1, beta2, avg_frac, stop_frac, tol=1e-3):
     return new_R, p, o
 
 
-def init_R0_f0(x, r, lr_f, T_f, tol=1e-3):
+def init_R0_f0(x, r, S, lr_f, T_f, tol=1e-3):
     d = x.shape[1]
     R0 = np.random.randn(d, r) * 0
-    f0, reg = find_f(x=x, R=[R0], p=np.ones(1), lr=lr_f, tol=tol, T=T_f)
+    f0, reg = find_f(x=x, S=S, R=[R0], p=np.ones(1), lr=lr_f, tol=tol, T=T_f)
     return f0, R0, reg
 
 
-def algorithm(x, r, lr_r, lr_f, beta1, beta2,
+def algorithm(x, r, S, lr_r, lr_f, beta1, beta2,
               m, T_r, T_f,  avg_frac, stop_frac):
 
     regrets = np.zeros(m+1)
-    f0, R0, reg = init_R0_f0(x, r, lr_f, tol=1e-3, T_f=T_f)
+    f0, R0, reg = init_R0_f0(x=x, r=r, S=S, lr_f=lr_f, tol=1e-3, T_f=T_f)
     regrets[0] = reg
     R = [R0]
     f = [f0]
-    for i in range(m):
+    for i in tqdm.tqdm(range(m)):
         new_R, p, o = find_R(x=x, R=R, f=f, T=T_r,
                              lr_r=lr_r, lr_f=lr_f, beta1=beta1, beta2=beta2,
                              avg_frac=avg_frac, stop_frac=stop_frac, tol=1e-3)
         R.append(new_R)
-        new_f, reg = find_f(x=x, R=R, p=p, lr=lr_f, tol=1e-3, T=T_f)
+        new_f, reg = find_f(x=x, S=S, R=R, p=p, lr=lr_f, tol=1e-3, T=T_f)
         f.append(new_f)
         regrets[i+1] = reg
     _, p, o = find_R(x=x, R=R, f=f, T=T_r,
@@ -97,3 +98,30 @@ def algorithm(x, r, lr_r, lr_f, beta1, beta2,
                      avg_frac=avg_frac, stop_frac=stop_frac, tol=1e-3)
     return R, f, p, o, regrets
 
+
+def run_algorithm_S(b, d, r, m, sigma, s_skew, times, T_r, T_f,
+                  beta_f, beta_r, lr_f, lr_r, avg_frac_r, stop_frac_r):
+
+    basic_regrets = np.zeros(times)
+    s_regrets = np.zeros(times)
+
+    for i in range(times):
+        x = np.random.randn(b, d, 1) * sigma
+        S = np.diag(np.exp(np.random.randn(d) * s_skew))
+
+        R, f, regrets, p, o = algorithm(x=x, r=r, S=np.eye(d), lr_r=lr_r, lr_f=lr_f,
+                                        beta1=beta_f, beta2=beta_r,
+                                        m=m, T_r=T_r, T_f=T_f,  avg_frac=avg_frac_r, stop_frac=stop_frac_r)
+        f_new, basic_regret = find_f(x=x, R=R, S=S, p=p, lr=lr_f, T=T_f)
+
+        R, f, regrets, p, o = algorithm(x=x, r=r, S=S, lr_r=lr_r, lr_f=lr_f,
+                                        beta1=beta_f, beta2=beta_r,
+                                        m=m, T_r=T_r, T_f=T_f,  avg_frac=avg_frac_r, stop_frac=stop_frac_r)
+        f_new, s_regret = find_f(x=x, R=R, S=S, p=p, lr=lr_f, T=T_f)
+        #s_regret = min(regrets)
+
+        print(f'S regret = {s_regret.item()} ; basic regret = {basic_regret.item()}')
+        basic_regrets[i] = basic_regret
+        s_regrets[i] = s_regret
+
+    return basic_regrets, s_regrets

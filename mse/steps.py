@@ -9,7 +9,7 @@ def project_f(f, S):
     return f / np.linalg.norm(matrix_power(A=S, p=-0.5) @ f)
 
 
-def find_final_f(sigma, S, R, p, lr, tol=1e-3):
+def find_new_f(sigma, S, R, p, lr, tol=1e-3):
     d = sigma.shape[0]
     f_new = np.random.randn(d, 1)
     f_new = project_f(f=f_new, S=S)
@@ -27,39 +27,6 @@ def find_final_f(sigma, S, R, p, lr, tol=1e-3):
 
     regret = calc_regret(sigma=sigma, R=R, f=[f_new],
                          Q=optimal_Q(sigma=sigma, R=R, f=[f_new]), p=p, o=np.ones(1))
-    return f_new, p, regret
-
-
-def find_new_f(sigma, S, R, beta, lr, T, stop_frac, avg_frac):
-
-    T_stop = T // stop_frac
-    T_avg = T // avg_frac
-
-    p = np.ones(len(R)) / len(R)
-    p_sum = p * 0
-
-    d = sigma.shape[0]
-    f_new = np.random.randn(d, 1)
-    f_new = project_f(f=f_new, S=S)
-    f = [f_new]
-
-    for t in range(T):
-        Q = optimal_Q(sigma=sigma, R=R, f=f)
-        pg_f = partial_grad_f(sigma=sigma, f_i=f_new, R=R, p=p, Q_i=Q[:, 0])
-        f_new = f_new + lr * pg_f
-        f_new = project_f(f=f_new, S=S)
-
-        f = [f_new]
-
-        losses = calc_loss_matrix(sigma=sigma, R=R, Q=optimal_Q(sigma=sigma, R=R, f=f), f=f)
-        if t < T_stop:
-            p = MWU(p1=p, losses=losses, p2=np.ones([1]), beta=beta, dim=1)
-            if t > T_stop - T_avg:
-                p_sum += p
-        if t == T_stop:
-            p = p_sum / sum(p_sum)
-
-    regret = calc_regret(sigma=sigma, R=R, f=f, Q=optimal_Q(sigma=sigma, R=R, f=f), p=p, o=np.ones(1))
     return f_new, p, regret
 
 
@@ -112,7 +79,7 @@ def init_R0_f0(sigma, S, beta_f, beta_r, T_r, r,
     f0 = []
     R0 = [np.zeros([d, 1])]
     for i in range(r):
-        new_f, p, _ = find_final_f(sigma=sigma, S=S, R=R0, p=np.ones(len(R0)) / len(R0), lr=lr_f)
+        new_f, p, _ = find_new_f(sigma=sigma, S=S, R=R0, p=np.ones(len(R0)) / len(R0), lr=lr_f)
         new_f = np.round(new_f, 3)
         f0.append(new_f)
 
@@ -120,7 +87,7 @@ def init_R0_f0(sigma, S, beta_f, beta_r, T_r, r,
                                  beta_r=beta_r, stop_frac=stop_frac_r, avg_frac=avg_frac_r, lr=lr_r)
         R0.append(new_R)
 
-    _, _, regret = find_final_f(sigma=sigma, S=S, R=R0, p=np.ones(len(R0)) / len(R0), lr=lr_f)
+    _, _, regret = find_new_f(sigma=sigma, S=S, R=R0, p=np.ones(len(R0)) / len(R0), lr=lr_f)
     return np.array(R0[1:]).T[0], f0, regret
 
 
@@ -138,7 +105,7 @@ def algorithm(sigma, S, m, r, beta_f, beta_r, T_r, lr_f, lr_r, avg_frac_r, stop_
     p = np.ones(1)
 
     for i in range(m):
-        new_f, p, regret = find_final_f(sigma=sigma, S=S, R=R, p=p, lr=lr_r)
+        new_f, p, regret = find_new_f(sigma=sigma, S=S, R=R, p=p, lr=lr_r)
 
         regrets[i+1] = regret
         new_f = np.round(new_f, 3)
@@ -150,10 +117,10 @@ def algorithm(sigma, S, m, r, beta_f, beta_r, T_r, lr_f, lr_r, avg_frac_r, stop_
         new_R = np.real(new_R)
         R.append(new_R)
 
-    _, _, final_regret = find_final_f(sigma=sigma, S=S, R=R, p=p, lr=lr_f)
+    _, _, final_regret = find_new_f(sigma=sigma, S=S, R=R, p=p, lr=lr_f)
     regrets[m+1] = final_regret
 
-    return R, f, regrets
+    return R, f, regrets, p, o
 
 
 def run_algorithm(d, r, m, sigma_type, s_type, times, d_sigma, T_r,
@@ -177,7 +144,7 @@ def run_algorithm(d, r, m, sigma_type, s_type, times, d_sigma, T_r,
         print(f"l_star={l_star}", end=" ; ")
         print(f"regret_mix={regret_mix}", end=" ; ")
 
-        R, f, regrets = algorithm(sigma=sigma, S=get_pdm(d=d, type=matrix_type.IDENTITY), m=m, r=r, T_r=T_r,
+        R, f, regrets, p, o = algorithm(sigma=sigma, S=get_pdm(d=d, type=matrix_type.IDENTITY), m=m, r=r, T_r=T_r,
                                   beta_f=beta_f, beta_r=beta_r, lr_f=lr_f, lr_r=lr_r,
                                   avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r)
 
@@ -186,3 +153,40 @@ def run_algorithm(d, r, m, sigma_type, s_type, times, d_sigma, T_r,
         regret_mix_list[i] = np.real(regret_mix)
 
     return regret_list, regret_mix_list
+
+
+def run_algorithm_S(d, r, m, sigma_type, s_type, s_skew, times, d_sigma, T_r,
+                  beta_f, beta_r, lr_f, lr_r, avg_frac_r, stop_frac_r):
+
+    basic_regrets = np.zeros(times)
+    s_regrets = np.zeros(times)
+
+    for i in range(times):
+        sigma = get_pdm(d=d, type=sigma_type) ** d_sigma
+        sigma /= np.trace(sigma)
+        sigma *= d
+
+        S = get_pdm(d=d, type=s_type) ** s_skew
+        #S /= np.trace(S)
+        #S *= d
+        s = S.sum(axis=0)
+        np.random.shuffle(s)
+        S = np.diag(s)
+
+        R, f, regrets, p, o = algorithm(sigma=sigma, S=get_pdm(d=d, type=matrix_type.IDENTITY), m=m, r=r, T_r=T_r,
+                                        beta_f=beta_f, beta_r=beta_r, lr_f=lr_f, lr_r=lr_r,
+                                        avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r)
+        f_new, p, basic_regret = find_new_f(sigma=sigma, S=S, R=R, p=p, lr=lr_f, tol=1e-3)
+
+        #S_half = matrix_power(A=S, p=0.5)
+        #sigma = S_half @ sigma @ S_half
+
+        R, f, regrets, p, o = algorithm(sigma=sigma, S=S, m=m, r=r, T_r=T_r,
+                                        beta_f=beta_f, beta_r=beta_r, lr_f=lr_f, lr_r=lr_r,
+                                        avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r)
+        s_regret = min(regrets)
+        print(f'S regret = {s_regret.item()} ; basic regret = {basic_regret.item()}')
+        basic_regrets[i] = basic_regret
+        s_regrets[i] = s_regret
+
+    return basic_regrets, s_regrets
