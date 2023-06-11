@@ -9,36 +9,52 @@ import pickle
 import time
 from lr_utils import plot_and_save
 
+import optuna
+
 #%%
+
+def optimize(trial):
+
+    beta_f = trial.suggest_float('beta_f', 0.5, 0.99)
+    beta_r = trial.suggest_float('beta_r', 0.5, 0.99)
+    lr_f = trial.suggest_float('lr_f', 0, 1.0)
+    lr_r = trial.suggest_float('lr_r', 0, 1.0)
+    stop_frac = trial.suggest_int('stop_frac', 1, 10)
+    avg_frac = trial.suggest_int('avg_frac', stop_frac, 10)
+
+    skew_s = np.linspace(0, 2, 5)
+    res = np.zeros([len(skew_s), times])
+    metric = 0
+    for idx, s_skew in enumerate(skew_s):
+        print(f"s_std = {s_skew}")
+        basic_reg, s_reg = run_algorithm_S(b, d, r, m, sigma, s_skew, times, T_r, T_f,
+                                           beta_f, beta_r, lr_f, lr_r, avg_frac_r=avg_frac, stop_frac_r=stop_frac)
+        res[idx] = s_reg / basic_reg
+        metric += sum(res)
+
+    return metric
+
 
 b = 1000
-d = 5
-r = 2
-sigma=1
-
-lr_r = 1e-3
-lr_f = 1e-1
-beta_r = 0.9
-beta_f = 0.9
+d = 10
+r = 3
+sigma = 1
 
 m = 5
-avg_frac=4
-stop_frac=4
 T_r = 100
-T_f = 10_000
+T_f = 1_000
 
-times = 10
+times = 5
 
 #%%
 
-skew_s = np.linspace(0, 2, 5)
-res = np.zeros([len(skew_s), times])
+name = f"optuna-lr-s_b={b}_d={d}_r={r}_var={sigma}_m={m}_Tr={T_r}_Tf={T_f}"
+study = optuna.create_study(study_name=f'{name}',
+                            storage=f'sqlite:///./../optuna/{name}.db ',
+                            direction='minimize', load_if_exists=True)
 
-for idx, s_skew in enumerate(skew_s):
-    print(f"s_std = {s_skew}")
-    basic_reg, s_reg = run_algorithm_S(b, d, r, m, sigma, s_skew, times, T_r, T_f,
-                                       beta_f, beta_r, lr_f, lr_r, avg_frac_r=4, stop_frac_r=4)
-    res[idx] = basic_reg / s_reg
+study.optimize(optimize, n_trials=100)
+
 
 #%%
 
