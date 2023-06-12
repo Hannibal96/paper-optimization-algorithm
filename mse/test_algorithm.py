@@ -50,12 +50,16 @@ def test_sigma(study, opt_d, opt_r, opt_sigma,
             ratio = regret_list.min(axis=1) / regret_mix_list
             results[idx, :] = ratio
 
-        pickle.dump(results, open(f'acc-ratio_vs_sigma0_{sigma_suffix}.p', 'wb'))
-        pickle.dump(d_sigmas, open(f'sigma0-acc_{sigma_suffix}.p', 'wb'))
+        with open(f'acc-ratio_vs_sigma0_{sigma_suffix}.p', 'wb') as f:
+            pickle.dump(results, f)
+        with open(f'sigma0-acc_{sigma_suffix}.p', 'wb') as f:
+            pickle.dump(d_sigmas, f)
 
     else:
-        results = pickle.load(open(f'acc-ratio_vs_sigma0_{sigma_suffix}.p', 'rb'))
-        d_sigmas = pickle.load(open(f'sigma0-acc_{sigma_suffix}.p', 'rb'))
+        with open(f'acc-ratio_vs_sigma0_{sigma_suffix}.p', 'rb') as f:
+            results = pickle.load(f)
+        with open(f'sigma0-acc_{sigma_suffix}.p', 'rb') as f:
+            d_sigmas = pickle.load(f)
 
     plot_res(x_axis=d_sigmas, results=results,
              x_label=r'$\sigma_0$', y_label='Accuracy Ratio', label=f'd={d}, r={r}',
@@ -85,12 +89,16 @@ def test_r(study, opt_d, opt_r, opt_sigma,
             ratio = regret_list.min(axis=1) / regret_mix_list
             results[idx, :] = ratio
 
-        pickle.dump(results, open(f'acc-ratio_vs_r_.p', 'wb'))
-        pickle.dump(r_list, open(f'r-acc_{r_suffix}.p', 'wb'))
+        with open(f'acc-ratio_vs_r_.p', 'wb') as f:
+            pickle.dump(results, f)
+        with open(f'r-acc_{r_suffix}.p', 'wb') as f:
+            pickle.dump(r_list, f)
 
     else:
-        results = pickle.load(open(f'acc-ratio_vs_r_{r_suffix}.p', 'rb'))
-        r_list = pickle.load(open(f'r-acc_{r_suffix}.p', 'rb'))
+        with open(f'acc-ratio_vs_r_{r_suffix}.p', 'rb') as f:
+            results = pickle.load(f)
+        with open(f'r-acc_{r_suffix}.p', 'rb') as f:
+            r_list = pickle.load(f)
 
     plot_res(x_axis=r_list, results=results,
              x_label='r', y_label='Accuracy Ratio', label=f"d={d}" + r" $\sigma_0$=" + f"{opt_sigma}",
@@ -122,12 +130,16 @@ def test_d(study, opt_d, opt_r, opt_sigma,
             ratio = regret_list.min(axis=1) / regret_mix_list
             results[idx, :] = ratio
 
-        pickle.dump(results, open(f'acc-ratio_vs_d_{d_suffix}.p', 'wb'))
-        pickle.dump(d_list, open(f'd-acc_{d_suffix}.p', 'wb'))
+        with open(f'acc-ratio_vs_d_{d_suffix}.p', 'wb') as f:
+            pickle.dump(results, f)
+        with open(f'd-acc_{d_suffix}.p', 'wb') as f:
+            pickle.dump(d_list, f)
 
     else:
-        results = pickle.load(open(f'acc-ratio_vs_d_{d_suffix}.p', 'rb'))
-        d_list = pickle.load(open(f'd-acc_{d_suffix}.p', 'rb'))
+        with open(f'acc-ratio_vs_d_{d_suffix}.p', 'rb') as f:
+            results = pickle.load(f)
+        with open(f'd-acc_{d_suffix}.p', 'rb') as f:
+            d_list = pickle.load(f)
 
     plot_res(x_axis=d_list, results=results,
              x_label='d', y_label='Accuracy Ratio', label=f"r={opt_r}" + r" $\sigma_0$=" + f"{opt_sigma}",
@@ -148,10 +160,12 @@ def test_m(study, opt_d, opt_r, opt_sigma,
         regret_list, regret_mix_list = run_algorithm(d=d, r=r, m=m, sigma_type=sigma_type, s_type=s_type,
                                                      times=times, d_sigma=opt_sigma, T_r=T,
                                                      **params)
-        pickle.dump(regret_list, open(f'regrets.p', 'wb'))
+        with open(f'regrets.p', 'wb') as f:
+            pickle.dump(regret_list, f)
 
     else:
-        regret_list = pickle.load(open(f'regrets.p', 'rb'))
+        with open(f'regrets.p', 'rb') as f:
+            regret_list = pickle.load(f)
 
     plot_res(x_axis=range(m + 2), results=regret_list.T,
              x_label='#Iteration', y_label='Regret', label=f'd={d} r={r} ' + r'$\sigma_0$=' + f'{sigma}',
