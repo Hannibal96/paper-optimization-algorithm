@@ -48,4 +48,4 @@ if __name__ == "__main__":
                                 storage=f'sqlite:///./../optuna/{name}.db ',
                                 direction='minimize', load_if_exists=True)
 
-    study.optimize(optuna_optimize_algorithm, n_trials=100)
+    study.optimize(optuna_optimize_algorithm, n_trials=args.trials)
