@@ -67,6 +67,7 @@ def test_r(study, opt_d, opt_r, opt_sigma,
            d, sigma, T, times, m,
            r_max, r_min, spaces,
            sigma_type=matrix_type.DIAG, s_type=matrix_type.IDENTITY, load=False):
+    r_min, r_max, spaces = int(r_min), int(r_max), int(spaces)
 
     running_params = f"r = {r_min} - {r_max} - {spaces}"
     opt_params = f"opt-[d, r, sigma]=[{opt_d}, {opt_r}, {opt_sigma}]"
@@ -101,6 +102,8 @@ def test_d(study, opt_d, opt_r, opt_sigma,
            r, sigma, T, times, m,
            d_max, d_min, spaces,
            sigma_type=matrix_type.DIAG, s_type=matrix_type.IDENTITY, load=False):
+
+    d_min, d_max, spaces = int(d_min), int(d_max), int(spaces)
 
     running_params = f"d = {d_min} - {d_max} - {spaces}"
     opt_params = f"opt-[d, r, sigma]=[{opt_d}, {opt_r}, {opt_sigma}]"
