@@ -165,9 +165,9 @@ if __name__ == "__main__":
     parser.add_argument('--opt_s', "--opt_sigma", type=int, help="The sigma value of the optuna HPO", required=True)
     parser.add_argument('--sigma', "--s", type=int, help="The sigma value to test", required=False)
     parser.add_argument('--opt_m', type=int, help="The number of iterations of the algorithm HPO", required=True)
-    parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=True)
+    parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=False)
     parser.add_argument('--tr_opt', "--Tr_opt", "--opt_tr", type=int, help="The number of steps of the finding R phase", required=True)
-    parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=True)
+    parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=False)
     parser.add_argument('--test', "--Test", "--TEST", type=str, help="The type of testing to run", choices=["sigma", "r", "m", "d"], required=True)
     parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
 
