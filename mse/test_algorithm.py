@@ -187,7 +187,7 @@ if __name__ == "__main__":
     sigma_type = matrix_type.DIAG
     s_type = matrix_type.IDENTITY
 
-    name = f"opt_mse_d={opt_d}_r={opt_r}_sigma={sigma_type}_s={s_type}_m={opt_m}_Tr={opt_tr}_var={opt_sigma}"
+    name = f"opt-mse_d={opt_d}_r={opt_r}_sigma={sigma_type}_s={s_type}_m={opt_m}_Tr={opt_tr}_var={opt_sigma}"
     study = optuna.create_study(study_name=f'{name}',
                                 storage=f'sqlite:///./../optuna/{name}.db ',
                                 direction='minimize', load_if_exists=True)
