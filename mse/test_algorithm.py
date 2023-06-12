@@ -159,16 +159,17 @@ def test_m(study, opt_d, opt_r, opt_sigma,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test MSE linear setting")
     parser.add_argument('--opt_d', type=int, help="Dimension of the vector", required=True)
+    parser.add_argument('--d', type=int, help="The d value to test", required=False)
     parser.add_argument('--opt_r', type=int, help="The r value of the optuna HPO", required=True)
+    parser.add_argument('--r', type=int, help="The r value to test", required=False)
     parser.add_argument('--opt_s', "--opt_sigma", type=int, help="The sigma value of the optuna HPO", required=True)
-    parser.add_argument('--m', type=int, help="The number of iterations of the algorithm", required=True)
+    parser.add_argument('--sigma', "--s", type=int, help="The sigma value to test", required=False)
+    parser.add_argument('--opt_m', type=int, help="The number of iterations of the algorithm HPO", required=True)
+    parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=True)
     parser.add_argument('--tr_opt', "--Tr_opt", type=int, help="The number of steps of the finding R phase", required=True)
+    parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=True)
     parser.add_argument('--test', "--Test", "--TEST", type=str, help="The type of testing to run", choices=["sigma", "r", "m", "d"], required=True)
     parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
-
-    parser.add_argument('--d', type=int, help="The d value to test", required=False)
-    parser.add_argument('--r', type=int, help="The r value to test", required=False)
-    parser.add_argument('--sigma', "--s", type=int, help="The sigma value to test", required=False)
 
     parser.add_argument('--min', type=float, help="The min value of the range to test")
     parser.add_argument('--max', type=float, help="The max value of the range to test")
@@ -179,50 +180,43 @@ if __name__ == "__main__":
     opt_d = args.opt_d   # 20
     opt_r = args.opt_r   # 5
     opt_sigma = args.opt_s   # 3
-    m = args.m   # 20
-    T_r = args.tr   # 100
-    times = args.times
+    opt_m = args.opt_m   # 20
+    opt_tr = args.tr_opt   # 100
+    times = args.times  # 10
 
     sigma_type = matrix_type.DIAG
     s_type = matrix_type.IDENTITY
 
-    name = f"optuna_optimization_d={opt_d}_r={opt_r}_sigma={sigma_type}_s={s_type}_m={m}_Tr={T_r}_var={opt_sigma}"
+    name = f"optuna_optimization_d={opt_d}_r={opt_r}_sigma={sigma_type}_s={s_type}_m={opt_m}_Tr={opt_tr}_var={opt_sigma}"
     study = optuna.create_study(study_name=f'{name}',
                                 storage=f'sqlite:///./../optuna/{name}.db ',
                                 direction='minimize', load_if_exists=True)
 
-    if args.test == "sigma":
-        d = args.d if args.d else opt_d
-        r = args.r if args.r else opt_r
+    d = args.d if args.d else opt_d
+    r = args.r if args.r else opt_r
+    sigma = args.sigma if args.sigma else opt_sigma
+    m = args.m if args.m else opt_m
+    T_r = args.tr if args.tr else opt_tr
 
+    if args.test == "sigma":
         test_sigma(study=study, opt_d=opt_d, opt_r=opt_r, opt_sigma=opt_sigma,
                    d=d, r=r, T=T_r, times=times, m=m,
                    sigma_max=args.max, sigma_min=args.min, spaces=args.spaces,
                    sigma_type=matrix_type.DIAG, s_type=matrix_type.IDENTITY, load=False)
 
     elif args.test == "r":
-        d = args.d if args.d else opt_d
-        sigma = args.sigma if args.sigma else opt_sigma
-
         test_r(study=study, opt_d=opt_d, opt_r=opt_r, opt_sigma=opt_sigma,
                d=d, sigma=sigma, T=T_r, times=times, m=m,
                r_max=args.max, r_min=args.min, spaces=args.spaces,
                sigma_type=matrix_type.DIAG, s_type=matrix_type.IDENTITY, load=False)
 
     elif args.test == "d":
-        r = args.r if args.r else opt_r
-        sigma = args.sigma if args.sigma else opt_sigma
-
         test_d(study=study, opt_d=opt_d, opt_r=opt_r, opt_sigma=opt_sigma,
                r=r, sigma=sigma, T=T_r, times=times, m=m,
                d_max=args.max, d_min=args.min, spaces=args.spaces,
                sigma_type=matrix_type.DIAG, s_type=matrix_type.IDENTITY, load=False)
 
     elif args.test == "m":
-        d = args.d if args.d else opt_d
-        r = args.r if args.r else opt_r
-        sigma = args.sigma if args.sigma else opt_sigma
-
         test_m(study=study, opt_d=opt_d, opt_r=opt_r, opt_sigma=opt_sigma,
                d=d, m=m, r=r, sigma=sigma, times=times, T=T_r,
                sigma_type=matrix_type.DIAG, s_type=matrix_type.IDENTITY, load=False)
