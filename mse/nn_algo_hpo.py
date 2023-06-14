@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 from nn_utils import *
 import optuna
+import argparse
 
-#device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+# device = 'cuda' if torch.cuda.is_available() else 'cpu'
 device = 'cpu'
 
 
@@ -54,20 +56,26 @@ def plot_regrets(res, label, title=None, path=None):
         plt.clf()
 
 
-d = 20
-r = 3
-T = 100
-m = 20
-times = 10
-d_sigma = 1
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="NN HPO")
+    parser.add_argument('--d', type=int, help="The d value to test", required=True)
+    parser.add_argument('--r', type=int, help="The r value to test", required=True)
+    parser.add_argument('--sigma', "--s", type=int, help="The sigma value to test", required=True)
+    parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=True)
+    parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=True)
+    parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
 
+    args = parser.parse_args()
 
-name = f"opt-nn_d={d}_r={r}_m={m}_Tr={T}_var={d_sigma}"
-study = optuna.create_study(study_name=f'{name}',
-                            storage=f'sqlite:///./../optuna/{name}.db ',
-                            direction='minimize', load_if_exists=True)
-study.optimize(optuna_optimization, n_trials=100)
+    d = args.d
+    r = args.r
+    T = args.tr
+    m = args.m
+    times = args.times
+    d_sigma = args.sigma
 
-
-
-
+    name = f"opt-nn_d={d}_r={r}_m={m}_Tr={T}_var={d_sigma}"
+    study = optuna.create_study(study_name=f'{name}',
+                                storage=f'sqlite:///./../optuna/{name}.db ',
+                                direction='minimize', load_if_exists=True)
+    study.optimize(optuna_optimization, n_trials=100)
