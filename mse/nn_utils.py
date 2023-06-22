@@ -66,6 +66,8 @@ def optimal_q_formula(sigma, R_j, f_i):
     inv = R_j.linear_layer.weight @ sigma @ R_j.linear_layer.weight.T
     if R_j.linear_layer.weight.norm() == 0:
         return inv * 0 @ R_j.linear_layer.weight @ sigma @ f_i.linear_layer.weight.T
+    if torch.matrix_rank(inv) < sigma.shape[0]:
+        inv += torch.eye(sigma.shape[0]) * min(inv) / 10
     return torch.linalg.inv(inv) @ R_j.linear_layer.weight @ sigma @ f_i.linear_layer.weight.T
 
 
