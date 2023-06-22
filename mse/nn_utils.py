@@ -99,15 +99,15 @@ def optimal_q(sigma, R_j, f_i, tol, lr=1e-3, use_formula=False):
     return q
 
 
-def optimal_Q(sigma, R, f, tol=1e-1):
+def optimal_Q(sigma, R, f, use_opt_q, tol=1e-1):
     Q = {}
     for j in range(len(R)):
         for i in range(len(f)):
-            Q[(j, i)] = optimal_q(sigma=sigma, R_j=R[j], f_i=f[i], tol=tol)
+            Q[(j, i)] = optimal_q(sigma=sigma, R_j=R[j], f_i=f[i], tol=tol, use_formula=use_opt_q)
     return Q
 
 
-def find_worst_f(sigma, R, p, lr, tol=1e-2):
+def find_worst_f(sigma, R, p, lr, opt_q, tol=1e-2):
     d = sigma.shape[0]
     f = LinearModel(in_features=d, out_features=1).to(device=device)
     prev_f_weights = f.linear_layer.weight.clone()
@@ -115,7 +115,7 @@ def find_worst_f(sigma, R, p, lr, tol=1e-2):
 
     counter = 0
     while True:
-        Q = optimal_Q(sigma=sigma, R=R, f=[f])
+        Q = optimal_Q(sigma=sigma, R=R, f=[f], use_opt_q=opt_q)
 
         optimizer.zero_grad()
         loss_matrix = calc_loss_matrix(sigma=sigma, R=R, Q=Q, f=[f])
@@ -137,13 +137,12 @@ def find_worst_f(sigma, R, p, lr, tol=1e-2):
         if counter > 10000:
             break
 
-
-    loss_matrix = calc_loss_matrix(sigma=sigma, R=R, f=[f], Q=optimal_Q(sigma=sigma, R=R, f=[f]))
+    loss_matrix = calc_loss_matrix(sigma=sigma, R=R, f=[f], Q=optimal_Q(sigma=sigma, R=R, f=[f], use_opt_q=opt_q))
     regret = calc_regret(loss_matrix=loss_matrix, p=p, o=torch.ones(1))
     return f, regret
 
 
-def find_new_R(sigma, R, f, T, d, r, beta1, beta2, avg_frac, stop_frac, lr):
+def find_new_R(sigma, R, f, T, d, r, beta1, beta2, avg_frac, stop_frac, lr, opt_q):
     R_pool = R[:]
     T_stop = T - T // stop_frac
     T_avg = T // avg_frac
@@ -157,7 +156,7 @@ def find_new_R(sigma, R, f, T, d, r, beta1, beta2, avg_frac, stop_frac, lr):
     new_R = LinearModel(in_features=d, out_features=r).to(device=device)
     optimizer = optim.SGD(new_R.parameters(), lr=lr)
     R_pool.append(new_R)
-    Q = optimal_Q(sigma=sigma, R=R_pool, f=f) #
+    Q = optimal_Q(sigma=sigma, R=R_pool, f=f, use_opt_q=opt_q)  #
 
     for t in tqdm(range(T)):
         #Q = optimal_Q(sigma=sigma, R=[new_R], f=f)
@@ -173,7 +172,7 @@ def find_new_R(sigma, R, f, T, d, r, beta1, beta2, avg_frac, stop_frac, lr):
         R_pool[-1] = new_R
 
         #Q = optimal_Q(sigma=sigma, R=R_pool, f=f)
-        new_Q = optimal_Q(sigma=sigma, R=[new_R], f=f) #
+        new_Q = optimal_Q(sigma=sigma, R=[new_R], f=f, use_opt_q=opt_q)  #
         for i in range(len(f)): #
             Q[(0, i)] = copy.deepcopy(new_Q[(0, i)]) #
 
@@ -195,20 +194,20 @@ def find_new_R(sigma, R, f, T, d, r, beta1, beta2, avg_frac, stop_frac, lr):
 
 def init_R0_f0(sigma, d, r, T,
                beta_r, beta_f, lr_r, lr_f,
-               avg_frac_r, stop_frac_r):
+               avg_frac_r, stop_frac_r, opt_q):
 
     R0 = LinearModel(in_features=d, out_features=1).to(device=device)
     with torch.no_grad():
         R0.linear_layer.weight.mul_(0)
-    f0, reg = find_worst_f(sigma=sigma, R=[R0], p=torch.ones(1).to(device), lr=lr_f)
+    f0, reg = find_worst_f(sigma=sigma, R=[R0], p=torch.ones(1).to(device), lr=lr_f, opt_q=opt_q)
     f = [f0]
     R = [R0]
     for i in range(r):
         new_R, p, o = find_new_R(sigma=sigma, R=R, f=f, d=d, r=1, T=T, lr=lr_r,
                                  beta1=beta_f, beta2=beta_r,
-                                 avg_frac=avg_frac_r, stop_frac=stop_frac_r)
+                                 avg_frac=avg_frac_r, stop_frac=stop_frac_r, opt_q=opt_q)
         R.append(new_R)
-        new_f, reg = find_worst_f(sigma=sigma, R=R, p=p, lr=lr_f)
+        new_f, reg = find_worst_f(sigma=sigma, R=R, p=p, lr=lr_f, opt_q=opt_q)
         f.append(new_f)
 
     R0 = LinearModel(in_features=d, out_features=r).to(device=device)
@@ -219,35 +218,36 @@ def init_R0_f0(sigma, d, r, T,
     return R0, f, reg
 
 
-def algorithm(sigma, m, r, beta_f, beta_r, T_r, lr_r, lr_f, avg_frac_r, stop_frac_r):
+def algorithm(sigma, m, r, beta_f, beta_r, T_r, lr_r, lr_f, avg_frac_r, stop_frac_r, opt_q):
 
     regrets = np.zeros(m+1)
     d = sigma.shape[0]
 
     R0, f0, regret = init_R0_f0(sigma=sigma, d=d, r=r, T=T_r,
-                        beta_r=beta_r, beta_f=beta_f, lr_r=lr_r, lr_f=lr_f, avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r)
+                                beta_r=beta_r, beta_f=beta_f, lr_r=lr_r, lr_f=lr_f,
+                                avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r, opt_q=opt_q)
 
     f = f0[:]
     R = [R0]
     p = torch.ones(1).to(device)
     o = torch.ones(len(f)).to(device) / len(f)
 
-    new_f, regret = find_worst_f(sigma=sigma, R=R, p=p, lr=lr_f)
+    new_f, regret = find_worst_f(sigma=sigma, R=R, p=p, lr=lr_f, opt_q=opt_q)
     regrets[0] = regret
 
     for i in range(m):
         new_R, p, o = find_new_R(sigma=sigma, R=R, f=f, T=T_r, d=d, r=r,
-                                 beta1=beta_f, beta2=beta_r, avg_frac=avg_frac_r, stop_frac=stop_frac_r, lr=lr_r)
+                                 beta1=beta_f, beta2=beta_r, avg_frac=avg_frac_r, stop_frac=stop_frac_r, lr=lr_r, opt_q=opt_q)
         R.append(new_R)
 
-        new_f, regret = find_worst_f(sigma, R, p, lr=lr_f)
+        new_f, regret = find_worst_f(sigma, R, p, lr=lr_f, opt_q=opt_q)
         regrets[i+1] = regret
         f.append(new_f)
 
     return R, f, regrets
 
 
-def run_algorithm(d, r, m, times, beta_f, beta_r, T_r, lr_r, lr_f, avg_frac_r, stop_frac_r, d_sigma):
+def run_algorithm(d, r, m, times, beta_f, beta_r, T_r, lr_r, lr_f, avg_frac_r, stop_frac_r, d_sigma, opt_q):
     regrets = np.zeros([times, m+1])
     regrets_mix = np.zeros(times)
 
@@ -262,7 +262,7 @@ def run_algorithm(d, r, m, times, beta_f, beta_r, T_r, lr_r, lr_f, avg_frac_r, s
 
         R, f, curr_regrets = algorithm(sigma=sigma, m=m, r=r,
                                        beta_f=beta_f, beta_r=beta_r, lr_r=lr_r, lr_f=lr_f,
-                                       T_r=T_r, avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r)
+                                       T_r=T_r, avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r, opt_q=opt_q)
         regrets[t, :] = curr_regrets
         print(f"algo_regret={curr_regrets.min()}")
 

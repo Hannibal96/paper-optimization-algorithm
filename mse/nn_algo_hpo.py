@@ -19,7 +19,7 @@ def optuna_optimization(trial):
 
     regrets, regrets_mix = run_algorithm(d=d, r=r, m=m, times=times, d_sigma=d_sigma,
                                          beta_f=beta_f, beta_r=beta_r, T_r=T, lr_r=lr_r, lr_f=lr_f,
-                                         avg_frac_r=avg_frac, stop_frac_r=stop_frac)
+                                         avg_frac_r=avg_frac, stop_frac_r=stop_frac, opt_q=use_optimal_q)
 
     return sum(abs(np.log(regrets.min(axis=1) / regrets_mix)))
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=True)
     parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=True)
     parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
-    parser.add_argument('--opt_q', '--optimal_q', type=bool, help="Use optimal Q formula", required=False, action=s)
+    parser.add_argument('--opt_q', '--optimal_q', help="Use optimal Q formula", required=False, action='store_true')
 
     args = parser.parse_args()
 
@@ -74,6 +74,7 @@ if __name__ == "__main__":
     m = args.m
     times = args.times
     d_sigma = args.sigma
+    use_optimal_q = args.opt_q
 
     name = f"opt-nn_d={d}_r={r}_var={d_sigma}_m={m}_Tr={T}"
     study = optuna.create_study(study_name=f'{name}',
