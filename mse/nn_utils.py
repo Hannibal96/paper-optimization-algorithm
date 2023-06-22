@@ -256,14 +256,15 @@ def run_algorithm(d, r, m, times, beta_f, beta_r, T_r, lr_r, lr_f, avg_frac_r, s
         sigma = torch.diag(torch.exp(torch.flip(D, dims=(0,)))).to(device)
 
         l_star, regret_mix, A, b = optimal_solution(sigma=sigma, r=r)
-        print(f"l_star={l_star}", end=" ; ")
-        print(f"regret_mix={regret_mix}", end=" ; ")
+
         regrets_mix[t] = regret_mix
 
         R, f, curr_regrets = algorithm(sigma=sigma, m=m, r=r,
                                        beta_f=beta_f, beta_r=beta_r, lr_r=lr_r, lr_f=lr_f,
                                        T_r=T_r, avg_frac_r=avg_frac_r, stop_frac_r=stop_frac_r, opt_q=opt_q)
         regrets[t, :] = curr_regrets
+        print(f"l_star={l_star}", end=" ; ")
+        print(f"regret_mix={regret_mix}", end=" ; ")
         print(f"algo_regret={curr_regrets.min()}")
 
     return regrets, regrets_mix
