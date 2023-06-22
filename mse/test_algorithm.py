@@ -3,18 +3,19 @@ from optimal import *
 import matplotlib.pyplot as plt
 import optuna
 import pickle
-import warnings
-warnings.filterwarnings("error")
 import argparse
+#import warnings
+#warnings.filterwarnings("error")
 
 
 def plot_res(x_axis, results, x_label, y_label, label, title, path):
-    plt.grid()
+
     plt.plot(x_axis, results.mean(axis=1), label=label)
     plt.fill_between(x_axis, results.mean(axis=1)+results.std(axis=1), results.mean(axis=1)-results.std(axis=1),
                      color='r', alpha=0.5)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
+    plt.grid()
     plt.legend()
     plt.savefig(path+".png")
     plt.clf()
@@ -160,11 +161,11 @@ def test_m(study, opt_d, opt_r, opt_sigma,
         regret_list, regret_mix_list = run_algorithm(d=d, r=r, m=m, sigma_type=sigma_type, s_type=s_type,
                                                      times=times, d_sigma=opt_sigma, T_r=T,
                                                      **params)
-        with open(f'regrets.p', 'wb') as f:
+        with open(f'regret_vs_m{m_suffix}.p', 'wb') as f:
             pickle.dump(regret_list, f)
 
     else:
-        with open(f'regrets.p', 'rb') as f:
+        with open(f'regret_vs_m{m_suffix}.p', 'rb') as f:
             regret_list = pickle.load(f)
 
     plot_res(x_axis=range(m + 2), results=regret_list.T,
@@ -176,44 +177,47 @@ def test_m(study, opt_d, opt_r, opt_sigma,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test MSE linear setting")
     parser.add_argument('--opt_d', type=int, help="Dimension of the vector", required=True)
-    parser.add_argument('--d', type=int, help="The d value to test", required=False)
     parser.add_argument('--opt_r', type=int, help="The r value of the optuna HPO", required=True)
-    parser.add_argument('--r', type=int, help="The r value to test", required=False)
     parser.add_argument('--opt_s', "--opt_sigma", type=int, help="The sigma value of the optuna HPO", required=True)
-    parser.add_argument('--sigma', "--s", type=int, help="The sigma value to test", required=False)
     parser.add_argument('--opt_m', type=int, help="The number of iterations of the algorithm HPO", required=True)
-    parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=False)
-    parser.add_argument('--tr_opt', "--Tr_opt", "--opt_tr", type=int, help="The number of steps of the finding R phase", required=True)
-    parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=False)
-    parser.add_argument('--test', "--Test", "--TEST", type=str, help="The type of testing to run", choices=["sigma", "r", "m", "d"], required=True)
-    parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
+    parser.add_argument('--opt_tr', "--opt_Tr", type=int, help="The number of steps of the finding R phase", required=True)
+    parser.add_argument('--opt_times', type=int, help="The number of times to run the algorithm", required=False)
 
+    parser.add_argument('--d', type=int, help="The d value to test", required=False)
+    parser.add_argument('--r', type=int, help="The r value to test", required=False)
+    parser.add_argument('--sigma', "--s", type=int, help="The sigma value to test", required=False)
+    parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=False)
+    parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=False)
+    parser.add_argument('--times', type=int, help="The times value of the optuna HPO", required=False)
+
+    parser.add_argument('--test', "--Test", "--TEST", type=str, help="The type of testing to run", choices=["sigma", "r", "m", "d"], required=True)
     parser.add_argument('--min', type=float, help="The min value of the range to test")
     parser.add_argument('--max', type=float, help="The max value of the range to test")
-    parser.add_argument('--spaces', type=float, help="The space interval of the range to test")
+    parser.add_argument('--spaces', '--steps', type=float, help="The space interval of the range to test")
 
     args = parser.parse_args()
 
-    opt_d = args.opt_d   # 20
-    opt_r = args.opt_r   # 5
-    opt_sigma = args.opt_s   # 3
-    opt_m = args.opt_m   # 20
-    opt_tr = args.tr_opt   # 100
-    times = args.times  # 10
-
-    sigma_type = matrix_type.DIAG
-    s_type = matrix_type.IDENTITY
-
-    name = f"opt-mse_d={opt_d}_r={opt_r}_sigma={sigma_type}_s={s_type}_m={opt_m}_Tr={opt_tr}_var={opt_sigma}"
-    study = optuna.create_study(study_name=f'{name}',
-                                storage=f'sqlite:///./../optuna/{name}.db ',
-                                direction='minimize', load_if_exists=True)
+    opt_d = args.opt_d
+    opt_r = args.opt_r
+    opt_sigma = args.opt_s
+    opt_m = args.opt_m
+    opt_tr = args.opt_tr
+    opt_times = args.opt_times
 
     d = args.d if args.d else opt_d
     r = args.r if args.r else opt_r
     sigma = args.sigma if args.sigma else opt_sigma
     m = args.m if args.m else opt_m
     T_r = args.tr if args.tr else opt_tr
+    times = args.times if args.times else opt_times
+
+    sigma_type = matrix_type.DIAG
+    s_type = matrix_type.IDENTITY
+
+    name = f"opt-mse_d={opt_d}_r={opt_r}_var={opt_sigma}_sigma={sigma_type}_s={s_type}_m={opt_m}_Tr={opt_tr}_times={opt_times}"
+    study = optuna.create_study(study_name=f'{name}',
+                                storage=f'sqlite:///./../optuna/{name}.db ',
+                                direction='minimize', load_if_exists=True)
 
     if args.test == "sigma":
         test_sigma(study=study, opt_d=opt_d, opt_r=opt_r, opt_sigma=opt_sigma,

@@ -69,7 +69,7 @@ def optimal_q_formula(sigma, R_j, f_i):
     return torch.linalg.inv(inv) @ R_j.linear_layer.weight @ sigma @ f_i.linear_layer.weight.T
 
 
-def optimal_q(sigma, R_j, f_i, tol=1e-3, lr=1e-3, use_formula=False):
+def optimal_q(sigma, R_j, f_i, tol, lr=1e-3, use_formula=False):
     r = R_j.linear_layer.weight.shape[0]
     q = LinearModel(in_features=r, out_features=1).to(device=device)
 
@@ -81,13 +81,13 @@ def optimal_q(sigma, R_j, f_i, tol=1e-3, lr=1e-3, use_formula=False):
     prev_weights = q.linear_layer.weight.clone()
 
     optimizer = optim.SGD(q.parameters(), lr=lr)
-    for t in range(1_000_000):
+    for t in range(10000):
         optimizer.zero_grad()
         loss = calc_loss(sigma=sigma, f_i=f_i, R_j=R_j, q_ji=q)
         loss.backward()
         optimizer.step()
-        if torch.linalg.norm(q.linear_layer.weight.grad) < tol \
-                or torch.linalg.norm(q.linear_layer.weight - prev_weights) < tol:
+        if torch.linalg.norm(q.linear_layer.weight.grad) / lr < tol \
+                or torch.linalg.norm(q.linear_layer.weight - prev_weights) / lr < tol:
             break
         else:
             prev_weights = q.linear_layer.weight.clone()
@@ -96,24 +96,24 @@ def optimal_q(sigma, R_j, f_i, tol=1e-3, lr=1e-3, use_formula=False):
             lr = lr / 2
             optimizer = optim.SGD(q.parameters(), lr=lr)
 
-
     return q
 
 
-def optimal_Q(sigma, R, f):
+def optimal_Q(sigma, R, f, tol=1e-1):
     Q = {}
     for j in range(len(R)):
         for i in range(len(f)):
-            Q[(j, i)] = optimal_q(sigma=sigma, R_j=R[j], f_i=f[i])
+            Q[(j, i)] = optimal_q(sigma=sigma, R_j=R[j], f_i=f[i], tol=tol)
     return Q
 
 
-def find_worst_f(sigma, R, p, lr, tol=1e-3):
+def find_worst_f(sigma, R, p, lr, tol=1e-2):
     d = sigma.shape[0]
     f = LinearModel(in_features=d, out_features=1).to(device=device)
     prev_f_weights = f.linear_layer.weight.clone()
     optimizer = optim.SGD(f.parameters(), lr=lr)
 
+    counter = 0
     while True:
         Q = optimal_Q(sigma=sigma, R=R, f=[f])
 
@@ -133,6 +133,10 @@ def find_worst_f(sigma, R, p, lr, tol=1e-3):
             break
         else:
             prev_f_weights = f.linear_layer.weight.clone()
+        counter += 1
+        if counter > 10000:
+            break
+
 
     loss_matrix = calc_loss_matrix(sigma=sigma, R=R, f=[f], Q=optimal_Q(sigma=sigma, R=R, f=[f]))
     regret = calc_regret(loss_matrix=loss_matrix, p=p, o=torch.ones(1))

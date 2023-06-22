@@ -64,6 +64,7 @@ if __name__ == "__main__":
     parser.add_argument('--m', type=int, help="The number of iterations of the algorithm to use", required=True)
     parser.add_argument('--tr', "--Tr", type=int, help="The number of steps of the finding R phase", required=True)
     parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
+    parser.add_argument('--opt_q', '--optimal_q', type=bool, help="Use optimal Q formula", required=False, action=s)
 
     args = parser.parse_args()
 
@@ -74,7 +75,7 @@ if __name__ == "__main__":
     times = args.times
     d_sigma = args.sigma
 
-    name = f"opt-nn_d={d}_r={r}_m={m}_Tr={T}_var={d_sigma}"
+    name = f"opt-nn_d={d}_r={r}_var={d_sigma}_m={m}_Tr={T}"
     study = optuna.create_study(study_name=f'{name}',
                                 storage=f'sqlite:///./../optuna/{name}.db ',
                                 direction='minimize', load_if_exists=True)
