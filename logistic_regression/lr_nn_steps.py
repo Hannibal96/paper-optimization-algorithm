@@ -123,17 +123,3 @@ def algorithm(x, r, lr_r, lr_f, beta_f, beta_r,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -76,7 +76,11 @@ if __name__ == "__main__":
     d_sigma = args.sigma
     use_optimal_q = args.opt_q
 
-    name = f"opt-nn_d={d}_r={r}_var={d_sigma}_m={m}_Tr={T}"
+    if use_optimal_q:
+        name = f"opt-nn_d={d}_r={r}_var={d_sigma}_m={m}_Tr={T}_opt-q"
+    else:
+        name = f"opt-nn_d={d}_r={r}_var={d_sigma}_m={m}_Tr={T}"
+
     study = optuna.create_study(study_name=f'{name}',
                                 storage=f'sqlite:///./../optuna/{name}.db ',
                                 direction='minimize', load_if_exists=True)

@@ -1,8 +1,11 @@
+import numpy as np
+
 from lr_nn_steps import *
 import matplotlib.pyplot as plt
 import pickle
 import time
 from lr_utils import plot_and_save
+import argparse
 
 #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -34,6 +37,8 @@ def test_m(d, r, b, sigma, lr_r, lr_f, beta_r, beta_f, m, avg_frac, stop_frac, T
                           m=m, avg_frac=avg_frac, stop_frac=stop_frac, T_r=T_r, T_f=T_f,
                           times=times)
 
+    regrets = regrets.detach().numpy()
+
     plt.grid()
     plt.title("logistic regression regret vs iteration")
     plt.xlabel("#Iteration")
@@ -43,7 +48,7 @@ def test_m(d, r, b, sigma, lr_r, lr_f, beta_r, beta_f, m, avg_frac, stop_frac, T
                      regrets.T.mean(axis=1) + regrets.T.std(axis=1), regrets.T.mean(axis=1) - regrets.T.std(axis=1),
                      color='r', alpha=0.5)
     plt.legend()
-    name = f"real-nn-log-reg_reg-vs-iter_d={d}_r={r}_b={b}"
+    name = f"nn-log-reg_reg-vs-iter_d={d}_r={r}_b={b}_m={m}"
     plt.savefig(f"{name}.png")
     pickle.dump(regrets, open(f'{name}.p', 'wb'))
     plt.clf()
@@ -117,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument('--avg_frac', type=int, help="Average fraction", required=True)
     parser.add_argument('--stop_frac', type=int, help="Stop fraction", required=True)
 
-    parser.add_argument('--test', '--Test', type=str, help="Parameter test", required=True, choice=["sigma", "m", "d"])
+    parser.add_argument('--test', '--Test', type=str, help="Parameter test", required=True, choices=["sigma", "m", "d"])
 
     parser.add_argument('--min', type=int, help="Min value to test", required=False)
     parser.add_argument('--max', type=int, help="Max value to test", required=False)

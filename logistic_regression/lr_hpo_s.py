@@ -49,7 +49,7 @@ if __name__ == "__main__":
     T_f = args.Tf
     times = args.times
 
-    name = f"optuna-lr-s_b={b}_d={d}_r={r}_var={sigma}_m={m}_Tr={T_r}_Tf={T_f}"
+    name = f"opt-lr-s_b={b}_d={d}_r={r}_var={sigma}_m={m}_Tr={T_r}_Tf={T_f}"
     study = optuna.create_study(study_name=f'{name}',
                                 storage=f'sqlite:///./../optuna/{name}.db ',
                                 direction='minimize', load_if_exists=True)

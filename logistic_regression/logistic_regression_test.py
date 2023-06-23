@@ -1,3 +1,5 @@
+import numpy as np
+
 from lr_steps import *
 import matplotlib.pyplot as plt
 import pickle
@@ -6,7 +8,7 @@ from lr_utils import plot_and_save
 import argparse
 
 
-def run_lr_algo(d, r, b, sigma,
+def run_lr_algo(d, r, b, sigma, S,
                 lr_r, lr_f, beta_r, beta_f,
                 m, avg_frac, stop_frac, T_r, T_f,
                 times):
@@ -17,7 +19,7 @@ def run_lr_algo(d, r, b, sigma,
         print(f"#Exp={t}")
         R, f, p, o, regrets_t = algorithm(x=x, r=r,
                                        lr_r=lr_r, lr_f=lr_f, beta1=beta_r, beta2=beta_f,
-                                       m=m, T_r=T_r, T_f=T_f, avg_frac=avg_frac, stop_frac=stop_frac)
+                                       m=m, T_r=T_r, T_f=T_f, avg_frac=avg_frac, stop_frac=stop_frac, S=S)
         regrets[t, :] = regrets_t
         print(regrets_t[-1])
         run_time_seconds = time.time() - start_time
@@ -26,8 +28,8 @@ def run_lr_algo(d, r, b, sigma,
     return regrets
 
 
-def test_m(d, r, b, sigma, lr_r, lr_f, beta_r, beta_f, m, avg_frac, stop_frac, T_r, T_f, times):
-    regrets = run_lr_algo(d=d, r=r, b=b, sigma=sigma,
+def test_m(d, r, b, sigma, S, lr_r, lr_f, beta_r, beta_f, m, avg_frac, stop_frac, T_r, T_f, times):
+    regrets = run_lr_algo(d=d, r=r, b=b, sigma=sigma, S=S,
                           lr_r=lr_r, lr_f=lr_f, beta_r=beta_r, beta_f=beta_f,
                           m=m, avg_frac=avg_frac, stop_frac=stop_frac, T_r=T_r, T_f=T_f,
                           times=times)
@@ -36,7 +38,7 @@ def test_m(d, r, b, sigma, lr_r, lr_f, beta_r, beta_f, m, avg_frac, stop_frac, T
     plt.ylabel('Regret')
     plt.boxplot(regrets)
 
-    name = f"log-reg_reg-vs-iter_d={d}_r={r}_b={b}"
+    name = f"log-reg_reg-vs-iter_d={d}_r={r}_b={b}_m={m}"
     with open(f'{name}.p', 'wb') as f:
         pickle.dump(regrets, f)
     plt.savefig(f"{name}.png")
@@ -114,7 +116,7 @@ if __name__ == "__main__":
     parser.add_argument('--avg_frac', type=int, help="Average fraction", required=True)
     parser.add_argument('--stop_frac', type=int, help="Stop fraction", required=True)
 
-    parser.add_argument('--test', '--Test', type=str, help="Parameter test", required=True, choice=["sigma", "m", "d"])
+    parser.add_argument('--test', '--Test', type=str, help="Parameter test", required=True, choices=["sigma", "m", "d"])
 
     parser.add_argument('--min', type=int, help="Min value to test", required=False)
     parser.add_argument('--max', type=int, help="Max value to test", required=False)
@@ -142,8 +144,10 @@ if __name__ == "__main__":
     avg_frac = args.avg_frac
     stop_frac = args.stop_frac
 
+    S = np.eye(d)
+
     if args.test == "m":
-        test_m(d=d, r=r, b=b, sigma=sigma, lr_r=lr_r, lr_f=lr_f, beta_r=beta_r, beta_f=beta_f, m=m,
+        test_m(d=d, r=r, b=b, sigma=sigma, S=S, lr_r=lr_r, lr_f=lr_f, beta_r=beta_r, beta_f=beta_f, m=m,
                avg_frac=avg_frac, stop_frac=stop_frac, T_r=T_r, T_f=T_f, times=times)
 
     if args.test == "d":
