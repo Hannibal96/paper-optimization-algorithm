@@ -30,7 +30,6 @@ if __name__ == "__main__":
     parser.add_argument('--b', type=int, help="The batch size of the data", required=True)
     parser.add_argument('--d', type=int, help="The d value to test", required=True)
     parser.add_argument('--r', type=int, help="The r value to test", required=True)
-    parser.add_argument('--sigma', "--s", type=int, help="The sigma value to test", required=True)
     parser.add_argument('--m', type=int, help="The number of iterations of the algorithm", required=True)
     parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
     parser.add_argument('--Tr', '--tr', type=int, help="The number of steps of the finding R phase", required=True)
@@ -43,7 +42,6 @@ if __name__ == "__main__":
     b = args.b
     d = args.d
     r = args.r
-    sigma = args.sigma
     m = args.m
     T_r = args.Tr
     T_f = args.Tf
