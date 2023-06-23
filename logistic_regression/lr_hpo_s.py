@@ -34,6 +34,7 @@ if __name__ == "__main__":
     parser.add_argument('--times', type=int, help="The number of times to run the algorithm", required=True)
     parser.add_argument('--Tr', '--tr', type=int, help="The number of steps of the finding R phase", required=True)
     parser.add_argument('--Tf', '--tf', type=int, help="The number of steps of the finding F phase", required=True)
+    parser.add_argument('--sigma', '--s', type=float, help="Sigma to test", required=True)
 
     parser.add_argument('--trials', type=int, help="The number of trials", required=False, default=100)
 
@@ -46,6 +47,7 @@ if __name__ == "__main__":
     T_r = args.Tr
     T_f = args.Tf
     times = args.times
+    sigma = args.sigma
 
     name = f"opt-lr-s_b={b}_d={d}_r={r}_var={sigma}_m={m}_Tr={T_r}_Tf={T_f}"
     study = optuna.create_study(study_name=f'{name}',
