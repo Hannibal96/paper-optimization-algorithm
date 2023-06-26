@@ -19,6 +19,10 @@ class LinearModel(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.linear_layer(x)
 
+    def normalize(self):
+        with torch.no_grad():
+            self.linear_layer.weight.div_(torch.norm(self.linear_layer.weight, dim=1, keepdim=True))
+
 
 def sanity_check_pg_f(sigma, f_n, p, R, Q):
     with torch.no_grad():
@@ -128,9 +132,7 @@ def find_worst_f(sigma, R, p, lr, opt_q, tol=1e-2):
             print(sanity_check_pg_f(sigma=sigma, R=R, f_n=f, p=p, Q=Q))"""
         optimizer.step()
 
-        with torch.no_grad():
-            f.linear_layer.weight.div_(torch.norm(f.linear_layer.weight, dim=1, keepdim=True))
-
+        f.normalize()
         if torch.linalg.norm(f.linear_layer.weight - prev_f_weights)/lr < tol:
             break
         else:
