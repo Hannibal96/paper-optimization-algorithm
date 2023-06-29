@@ -5,14 +5,14 @@ import argparse
 
 def optimize(trial):
 
-    beta_f = trial.suggest_float('beta_f', 0.5, 0.99)
-    beta_r = trial.suggest_float('beta_r', 0.5, 0.99)
+    beta_f = trial.suggest_float('beta_f', 0.75, 1.0)
+    beta_r = trial.suggest_float('beta_r', 0.75, 1.0)
     lr_f = trial.suggest_float('lr_f', 0, 1.0)
     lr_r = trial.suggest_float('lr_r', 0, 1.0)
     stop_frac = trial.suggest_int('stop_frac', 1, 10)
     avg_frac = trial.suggest_int('avg_frac', stop_frac, 10)
 
-    skew_s = np.linspace(0, 2, 5)
+    skew_s = np.linspace(0.5, 2, 4)
     res = np.zeros([len(skew_s), times])
     metric = 0
     for idx, s_skew in enumerate(skew_s):
@@ -56,3 +56,4 @@ if __name__ == "__main__":
 
     study.optimize(optimize, n_trials=args.trials)
 
+    study = optuna.create_study(study_name=f'{name}', storage=f'sqlite:///./../optuna/{name}.db ', direction='minimize', load_if_exists=True)
