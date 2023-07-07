@@ -20,9 +20,8 @@ def optimize(trial):
         basic_reg, s_reg = run_algorithm_S(b, d, r, m, sigma, s_skew, times, T_r, T_f,
                                            beta_f, beta_r, lr_f, lr_r, avg_frac_r=avg_frac, stop_frac_r=stop_frac)
         res[idx] = s_reg / basic_reg
-        metric += sum(sum(res))
 
-    return metric
+    return res.mean()
 
 
 if __name__ == "__main__":
