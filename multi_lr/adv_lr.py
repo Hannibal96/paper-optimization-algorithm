@@ -195,13 +195,19 @@ def run_iter(N, r_list_pca, r_list_algo, num_shapes=6):
 def plot(results):
     (r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul) = results
 
-    plt.plot(r_list_pca, pca_acc_mul.min(axis=2).mean(axis=0), label="Worst Case PCA Acc")
-    plt.fill_between(r_list_pca, pca_acc_mul.min(axis=2).mean(axis=0) + pca_acc_mul.min(axis=2).std(axis=0),
-                     pca_acc_mul.min(axis=2).mean(axis=0) - pca_acc_mul.min(axis=2).std(axis=0), alpha=0.2)
+    avg_res = pca_acc_mul.mean(axis=0)
+    std_res = pca_acc_mul.std(axis=0)
 
-    plt.plot(r_list_pca, pca_acc_mul.mean(axis=2).mean(axis=0), label="Mean PCA Acc")
-    plt.fill_between(r_list_pca, pca_acc_mul.mean(axis=2).mean(axis=0) + pca_acc_mul.mean(axis=2).std(axis=0),
-                     pca_acc_mul.mean(axis=2).mean(axis=0) - pca_acc_mul.mean(axis=2).std(axis=0), alpha=0.2)
+    ind_res = np.argmin(avg_res, axis=1)
+    min_res = avg_res[range(avg_res.shape[0]), ind_res]
+    min_std = std_res[range(avg_res.shape[0]), ind_res]
+    plt.plot(r_list_pca, min_res, label="Worst Case PCA Acc")
+    plt.fill_between(r_list_pca, min_res + min_std, min_res - min_std, alpha=0.2)
+
+    avg_mean = pca_acc_mul.mean(axis=0).mean(axis=1)
+    std_mean = pca_acc_mul.std(axis=0).mean(axis=1)
+    plt.plot(r_list_pca, avg_mean, label="Mean PCA Acc")
+    plt.fill_between(r_list_pca, avg_mean + std_mean, avg_mean - std_mean, alpha=0.2)
 
     for idx, algo_r in enumerate(r_list_lago):
         curr_eq_val = eq_acc_mul[:, idx]
@@ -217,13 +223,19 @@ def plot(results):
     plt.savefig("results_acc_mul-lr.png")
     plt.clf()
 
-    plt.plot(r_list_pca, pca_loss_mul.min(axis=2).mean(axis=0), label="Worst Case PCA Loss")
-    plt.fill_between(r_list_pca, pca_loss_mul.min(axis=2).mean(axis=0) + pca_loss_mul.min(axis=2).std(axis=0),
-                     pca_loss_mul.min(axis=2).mean(axis=0) - pca_loss_mul.min(axis=2).std(axis=0), alpha=0.2)
+    avg_res = pca_loss_mul.mean(axis=0)
+    std_res = pca_loss_mul.std(axis=0)
 
-    plt.plot(r_list_pca, pca_loss_mul.mean(axis=2).mean(axis=0), label="Mean PCA Loss")
-    plt.fill_between(r_list_pca, pca_loss_mul.mean(axis=2).mean(axis=0) + pca_loss_mul.mean(axis=2).std(axis=0),
-                     pca_loss_mul.mean(axis=2).mean(axis=0) - pca_loss_mul.mean(axis=2).std(axis=0), alpha=0.2)
+    ind_res = np.argmax(avg_res, axis=1)
+    min_res = avg_res[range(avg_res.shape[0]), ind_res]
+    min_std = std_res[range(avg_res.shape[0]), ind_res]
+    plt.plot(r_list_pca, min_res, label="Worst Case PCA Loss")
+    plt.fill_between(r_list_pca, min_res + min_std, min_res - min_std, alpha=0.2)
+
+    avg_mean = pca_loss_mul.mean(axis=0).mean(axis=1)
+    std_mean = pca_loss_mul.std(axis=0).mean(axis=1)
+    plt.plot(r_list_pca, avg_mean, label="Mean PCA Loss")
+    plt.fill_between(r_list_pca, avg_mean + std_mean, avg_mean - std_mean, alpha=0.2)
 
     for idx, algo_r in enumerate(r_list_lago):
         curr_eq_val = eq_loss_mul[:, idx]
@@ -240,6 +252,10 @@ def plot(results):
 
 
 if __name__ == "__main__":
+
+    #with open("res_acc_mul_lIl.p", "rb") as f:
+    #    results = pickle.load(f)
+    #plot(results=results)
 
     r_list_pca = range(1, 6)
     r_list_lago = range(1, 3)
