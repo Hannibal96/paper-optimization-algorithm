@@ -1,28 +1,20 @@
 import pickle
-
 import matplotlib.pyplot as plt
-from data import gen_data, shape_idx
+from data import gen_data, shape_idx, plot_data
 import numpy as np
-from lr import plot_data
 import math
+import argparse
 
 
-def w_grad(R, x, y, w):
+def get_dw(R, x, y, w):
     m = x.shape[0]
-    sigma = w * 0
-    for x_i, y_i in zip(x, y):
-        x_tilde = R.T @ x_i.reshape(-1, 1)
-        sigma += ((1 / (1 + np.exp(-w.T @ x_tilde))) - y_i) * x_tilde
-    return sigma / m
+    return ((1/(1+np.exp(-w.T @ R.T @ x.T)) - y) @ (R.T @ x.T).T) / m
 
 
-def R_grad(R, x, y, w):
+def get_dR(R, x, y, w):
     m = x.shape[0]
-    sigma = R * 0
-    for x_i, y_i in zip(x, y):
-        x_tilde = R.T @ x_i
-        sigma += ((1 / (1 + np.exp(-w.T @ x_tilde))) - y_i) * x_i.reshape(-1, 1) @ w.T
-    return sigma / m
+    dr = (1 / (1 + np.exp(-w.T @ R.T @ x.T)) - y).reshape(m, 1, 1) * x.reshape(m, -1, 1) @ w.T
+    return dr.mean(axis=0)
 
 
 def find_w(R, x, y, lr=1e-1, tol=1e-2):
@@ -30,35 +22,23 @@ def find_w(R, x, y, lr=1e-1, tol=1e-2):
     w = np.random.randn(r, 1)
     acc_list = []
     norm_list = []
-    t = 0
-    while True:
-        dw = w_grad(R=R, x=x, y=y, w=w)
-        dw_norm = np.linalg.norm(dw)
-        norm_list.append(dw_norm)
+    for t in range(1000):
+        dw = get_dw(R=R, x=x, y=y, w=w).reshape(r, 1)
         w = w - lr * dw
-        acc = calc_acc(x=x, R=R, w=w, labels=y)
+        norm_list.append(np.linalg.norm(dw))
         loss = calc_loss(x=x, R=R, w=w, labels=y)
-        acc_list.append(acc)
-        #print(dw_norm, acc)
-        if dw_norm < tol or t > 1000:
-            #print(dw_norm, acc)
+        acc_list.append(calc_acc(x=x, R=R, w=w, labels=y))
+        if norm_list[-1] < tol:
             break
-        t += 1
     return w
 
 
 def find_R(w, x, y, r, T=100, lr=1e-1):
     d = x.shape[1]
     R = np.random.randn(d, r)
-    acc_list = []
-    #print("*****")
     for t in range(T):
-        dR = R_grad(R=R, x=x, y=y, w=w)
+        dR = get_dR(R=R, x=x, y=y, w=w)
         R = R - lr * dR
-        if t % 10 == 0:
-            acc = calc_acc(x=x, R=R, w=w, labels=y)
-            loss = calc_loss(x=x, R=R, w=w, labels=y)
-            #print(acc)
     return R
 
 
@@ -77,9 +57,6 @@ def pca(X, num_components):
 
 def pca_step(x, r, labels):
     pca_x, eigenvectors, eigenvalues = pca(X=x, num_components=r)
-    # plt.imshow(transformed_data[0].reshape(25, 25))
-    # plt.title(f"{n}")
-    # plt.show()
     w = find_w(R=np.eye(625), x=pca_x, y=labels)
     acc = calc_acc(x=x, R=np.eye(625), w=w, labels=labels)
     loss = calc_loss(x=x, R=np.eye(625), w=w, labels=labels)
@@ -103,7 +80,7 @@ def solve_eq(R_dict, x, full_labels, w_lr=1e-1, tol=1e-2):
     a = len(shape_idx) - 1
     M_acc = np.zeros([a, a])
     M_loss = np.zeros([a, a])
-    for R_idx in range(1, a + 1):
+    for R_idx in range(a):
         name = shape_idx[R_idx]
         R, _ = R_dict[name]
         for f_idx in range(1, a + 1):
@@ -165,12 +142,10 @@ def run_iter(N, r_list_pca, r_list_algo, num_shapes=6):
     pca_loss = np.ones([len(r_list_pca), num_shapes])
     for r_idx, r in enumerate(r_list_pca):
         print(f"*** *** r={r}, pca")
-        for f_idx, labels_idx in enumerate(range(1, num_shapes+1)):
+        for f_idx, labels_idx in enumerate(range(len(shape_idx)-1)):
             name = shape_idx[labels_idx]
             # plot_data(data=data, labels=labels, n=5, title=name)
             labels = full_labels[:, labels_idx]
-            labels = (labels + 1) // 2
-
             pca_x, w, acc, loss = pca_step(x=x, r=r, labels=labels)
             pca_acc[r_idx, f_idx] = acc
             pca_loss[r_idx, f_idx] = loss
@@ -180,10 +155,9 @@ def run_iter(N, r_list_pca, r_list_algo, num_shapes=6):
     for r_idx, r in enumerate(r_list_algo):
         print(f"*** *** r={r}, algo")
         R_dict = {}
-        for labels_idx in range(1, 7):
+        for labels_idx in range(len(shape_idx)-1):
             name = shape_idx[labels_idx]
             labels = full_labels[:, labels_idx]
-            labels = (labels + 1) // 2
             R_dict = algo_step(d, r, x, labels, R_dict=R_dict, name=name, w_lr=1e-1, r_lr=1e0, tol=1e-2, T=100)
         eq_acc, eq_loss = solve_eq(R_dict=R_dict, x=x, full_labels=full_labels, w_lr=1e-1, tol=1e-2)
         algo_acc[r_idx] = eq_acc
@@ -192,7 +166,7 @@ def run_iter(N, r_list_pca, r_list_algo, num_shapes=6):
     return pca_acc, pca_loss, algo_acc, algo_loss
 
 
-def plot(results):
+def plot_results(results):
     (r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul) = results
 
     avg_res = pca_acc_mul.mean(axis=0)
@@ -253,16 +227,17 @@ def plot(results):
 
 if __name__ == "__main__":
 
-    #with open("res_acc_mul_lIl.p", "rb") as f:
-    #    results = pickle.load(f)
-    #plot(results=results)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--runs", default=10)
+    parser.add_argument("--N", default=10)
 
-    r_list_pca = range(1, 6)
-    r_list_lago = range(1, 3)
+    args = parser.parse_args()
 
-    num_shapes = 6
-    runs = 3
-    N = 100
+    num_shapes = len(shape_idx) - 1
+    r_list_pca = range(1, 22, 2)
+    r_list_lago = range(1, 7, 2)
+    runs = args.runs
+    N = args.N
 
     pca_acc_mul = np.zeros([runs, len(r_list_pca), num_shapes])
     pca_loss_mul = np.zeros([runs, len(r_list_pca), num_shapes])
@@ -281,4 +256,4 @@ if __name__ == "__main__":
         results = [r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul]
         pickle.dump(results, f)
 
-    plot(results=results)
+    plot_results(results=results)

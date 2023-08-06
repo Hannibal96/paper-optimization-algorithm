@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-shape_idx = {0: "shapes", 1: "circle", 2: "square", 3: "diamond", 4: "triangle", 5: "cross", 6: "x"}
+shape_idx = {0: "circle", 1: "square", 2: "diamond", 3: "triangle", 4: "cross", 5: "x", 6: "shapes", }
 
 
 def create_triangle(size):
@@ -69,7 +69,7 @@ def gen_data(s=10, N=100):
 
         num_shape = np.random.randint(low=1, high=5)
         Q = np.random.choice(range(4), num_shape, replace=False)
-        flags = -np.ones(6, dtype=np.int32)
+        flags = np.zeros(6, dtype=np.int32)
         for q in Q:
             g = np.random.randint(low=0, high=len(generators))
             shape = generators[g](size=s)
@@ -82,8 +82,38 @@ def gen_data(s=10, N=100):
 
         # num_shapes, 
         label = list(flags)
-        label.insert(0, num_shape)
+        label.append(num_shape)
         labels.append(label)
         data.append(photo)
     return np.array(data), np.array(labels)
+
+
+def plot_data(data=None, labels=None, N=100, n=5):
+    if data is None:
+        data, labels = gen_data(N=N)
+
+    for sample, (photo, curr_labels) in enumerate(zip(data[0:n], labels[0:n])):
+        title = ""
+        for labels_idx in range(len(shape_idx) - 1):
+            shape_label = curr_labels[labels_idx]
+            title += shape_idx[labels_idx] + f": {shape_label}, "
+        plt.title(title)
+        plt.imshow(photo)
+        plt.savefig(f"./multi_lr/Lyx/sample_{sample}.png")
+        plt.clf()
+
+
+if __name__ == "__main__":
+    data, labels = gen_data(s=10, N=100)
+    x = data.reshape(data.shape[0], -1)
+    y = labels[:, range(0, len(shape_idx)-1)]
+    d = x.shape[1]
+    r = 3
+    m = x.shape[0]
+    R = np.random.randn(d, r)
+    w = np.random.randn(r, 1)
+
+
+    plot_data(data=data, labels=labels)
+
 
