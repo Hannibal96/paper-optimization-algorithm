@@ -166,7 +166,7 @@ def run_iter(N, r_list_pca, r_list_algo, num_shapes=6):
     return pca_acc, pca_loss, algo_acc, algo_loss
 
 
-def plot_results(results):
+def plot_results(results, N, runs):
     (r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul) = results
 
     avg_res = pca_acc_mul.mean(axis=0)
@@ -194,7 +194,7 @@ def plot_results(results):
 
     plt.grid()
     plt.legend()
-    plt.savefig("results_acc_mul-lr.png")
+    plt.savefig(f"results_acc_mul-lr_N={N}_R={runs}.png")
     plt.clf()
 
     avg_res = pca_loss_mul.mean(axis=0)
@@ -222,7 +222,7 @@ def plot_results(results):
 
     plt.grid()
     plt.legend()
-    plt.savefig("results_loss_mul-lr.png")
+    plt.savefig(f"results_loss_mul-lr_N={N}_R={runs}.png")
 
 
 if __name__ == "__main__":
@@ -252,7 +252,7 @@ if __name__ == "__main__":
         pca_acc_mul[i] = pca_acc
         pca_loss_mul[i] = pca_loss
 
-    with open("res_acc_mul_ll.p", "wb") as f:
+    with open(f"res_acc_mul_ll_N={N}_R={runs}.p", "wb") as f:
         results = [r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul]
         pickle.dump(results, f)
 
