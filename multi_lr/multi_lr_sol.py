@@ -228,8 +228,8 @@ def plot_results(results, N, runs):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--runs", default=10)
-    parser.add_argument("--N", default=10)
+    parser.add_argument("--runs", default=10, type=int)
+    parser.add_argument("--N", default=10, type=int)
 
     args = parser.parse_args()
 
