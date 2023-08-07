@@ -59,7 +59,7 @@ def create_x(size):
     return arr
 
 
-def gen_data(s=10, N=100):
+def gen_data(s=10, N=100, offset=False, noise=False):
     S = 25
     generators = [create_circle, create_square, create_diamond, create_triangle, create_cross, create_x]
     data = []
@@ -74,8 +74,8 @@ def gen_data(s=10, N=100):
             g = np.random.randint(low=0, high=len(generators))
             shape = generators[g](size=s)
             flags[g] = 1
-            x_offset = np.random.randint(low=-1, high=2)
-            y_offset = np.random.randint(low=-1, high=2)
+            x_offset = np.random.randint(low=-1, high=2) * int(offset)
+            y_offset = np.random.randint(low=-1, high=2) * int(offset)
             if q == 0:
                 photo[1+x_offset:1+s+x_offset, 1+y_offset:1+s+y_offset] = shape
             if q == 1:
@@ -84,7 +84,7 @@ def gen_data(s=10, N=100):
                 photo[14+x_offset:14+s+x_offset, 1+y_offset:1+s+y_offset] = shape
             if q == 3:
                 photo[14+x_offset:14+s+x_offset, 14+y_offset:14+s+y_offset] = shape
-        photo = photo + np.random.randint(size=(S, S), low=0, high=100) / 200
+        photo = photo + int(noise) * np.random.randint(size=(S, S), low=0, high=100) / 200
         # num_shapes, 
         label = list(flags)
         label.append(num_shape)
