@@ -84,7 +84,7 @@ def gen_data(s=10, N=100):
                 photo[14+x_offset:14+s+x_offset, 1+y_offset:1+s+y_offset] = shape
             if q == 3:
                 photo[14+x_offset:14+s+x_offset, 14+y_offset:14+s+y_offset] = shape
-
+        photo = photo + np.random.randint(size=(S, S), low=0, high=100) / 200
         # num_shapes, 
         label = list(flags)
         label.append(num_shape)
