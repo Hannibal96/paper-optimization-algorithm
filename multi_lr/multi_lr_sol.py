@@ -256,4 +256,5 @@ if __name__ == "__main__":
         results = [r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul]
         pickle.dump(results, f)
 
-    plot_results(results=results)
+    plot_results(results=results, N=N, runs=runs)
+
