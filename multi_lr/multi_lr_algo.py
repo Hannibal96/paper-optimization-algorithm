@@ -81,7 +81,7 @@ def find_new_R(x, R, f, T, beta_f, beta_r, avg_frac, stop_frac, lr):
                 p = p_sum / sum(p_sum)
             except:
                 o = np.ones([len(f), 1]) / len(f)
-                p = np.ones([len(R_pool), 1]) / len(R_pool)
+                p = np.ones([len(R), 1]) / len(R)
 
     return new_R, p, o
 
