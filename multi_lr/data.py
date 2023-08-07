@@ -74,11 +74,16 @@ def gen_data(s=10, N=100):
             g = np.random.randint(low=0, high=len(generators))
             shape = generators[g](size=s)
             flags[g] = 1
-
-            if q == 0:        photo[1:1+s, 1:1+s] = shape
-            if q == 1:        photo[1:1+s, 14:14+s] = shape
-            if q == 2:        photo[14:14+s, 1:1+s] = shape
-            if q == 3:        photo[14:14+s, 14:14+s] = shape
+            x_offset = np.random.randint(low=-1, high=2)
+            y_offset = np.random.randint(low=-1, high=2)
+            if q == 0:
+                photo[1+x_offset:1+s+x_offset, 1+y_offset:1+s+y_offset] = shape
+            if q == 1:
+                photo[1+x_offset:1+s+x_offset, 14+y_offset:14+s+y_offset] = shape
+            if q == 2:
+                photo[14+x_offset:14+s+x_offset, 1+y_offset:1+s+y_offset] = shape
+            if q == 3:
+                photo[14+x_offset:14+s+x_offset, 14+y_offset:14+s+y_offset] = shape
 
         # num_shapes, 
         label = list(flags)

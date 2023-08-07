@@ -100,18 +100,10 @@ tion function the best
 
  that represents the costs, giving that matrix we can calculate the equilibrium
  solution of 
-\begin_inset Formula $p^{*}$
-\end_inset
-
- that we seek by demanding that 
 \begin_inset Formula $p$
 \end_inset
 
- will enforce each choise of 
-\begin_inset Formula $f\in\mathcal{F}$
-\end_inset
-
- will results in the same regret.
+ that we seek.
  After finding the best 
 \begin_inset Formula $R,q$
 \end_inset
