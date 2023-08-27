@@ -307,5 +307,6 @@ if __name__ == "__main__":
     r1 = [r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul]
     r2 = [r_list_pca, r_list_lago, pca_acc_test_mul, pca_loss_test_mul, eq_acc_test_mul, eq_loss_test_mul]
 
-    plot_results(results=r1, path=f"train_D={args.data}_N={N}_R={runs}")
-    plot_results(results=r2, path=f"test_D={args.data}_N={N}_R={runs}")
+    path = f"D={args.data}{int(args.offset) * '_offset'}{int(args.noise) * '_noise'}_N={N}_R={runs}"
+    plot_results(results=r1, path=f"train_{path}")
+    plot_results(results=r2, path=f"test_D={path}")
