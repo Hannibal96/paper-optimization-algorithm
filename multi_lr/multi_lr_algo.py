@@ -101,6 +101,8 @@ def mu_lr_algo(data, full_labels):
 
 if __name__ == "__main__":
     data, full_labels = gen_data(N=100, offset=True, noise=True)
+    data_m, full_labels_m = gen_data(N=100, offset=True, noise=True)
+
     x = data.reshape(data.shape[0], -1)
     d = x.shape[1]
     R, f, p, o = mu_lr_algo(data=x, full_labels=full_labels)
