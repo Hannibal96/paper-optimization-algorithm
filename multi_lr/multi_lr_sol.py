@@ -264,8 +264,8 @@ if __name__ == "__main__":
     else:
         num_shapes = 10
 
-    r_list_pca = range(1, 22, 2)
-    r_list_lago = range(1, 7, 2)
+    r_list_pca = range(1, 6, 2)
+    r_list_lago = range(1, 5, 2)
     runs = args.runs
     N = args.N
 
