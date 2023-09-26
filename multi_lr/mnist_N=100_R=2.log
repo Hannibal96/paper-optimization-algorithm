@@ -1,0 +1,94 @@
+*** Run #0
+*** *** r=1, pca
+*** *** r=3, pca
+*** *** r=5, pca
+*** *** r=7, pca
+*** *** r=9, pca
+*** *** r=11, pca
+*** *** r=13, pca
+*** *** r=15, pca
+*** *** r=17, pca
+*** *** r=19, pca
+*** *** r=21, pca
+*** *** r=23, pca
+*** *** r=25, pca
+*** *** r=1, algo
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.64
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.9
+Alg: 0.95
+*** *** r=3, algo
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.97
+Alg: 0.97
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.94
+*** *** r=5, algo
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.99
+*** Run #1
+*** *** r=1, pca
+*** *** r=3, pca
+*** *** r=5, pca
+*** *** r=7, pca
+*** *** r=9, pca
+*** *** r=11, pca
+*** *** r=13, pca
+*** *** r=15, pca
+*** *** r=17, pca
+*** *** r=19, pca
+*** *** r=21, pca
+*** *** r=23, pca
+*** *** r=25, pca
+*** *** r=1, algo
+Alg: 0.98
+Alg: 1.0
+Alg: 0.99
+Alg: 1.0
+Alg: 0.38
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.64
+*** *** r=3, algo
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.71
+*** *** r=5, algo
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.98
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 1.0
+Alg: 0.61

@@ -264,8 +264,8 @@ if __name__ == "__main__":
     else:
         num_shapes = 10
 
-    r_list_pca = range(1, 6, 2)
-    r_list_lago = range(1, 5, 2)
+    r_list_pca = range(1, 26, 2)
+    r_list_lago = range(1, 7, 2)
     runs = args.runs
     N = args.N
 
@@ -300,7 +300,7 @@ if __name__ == "__main__":
         pca_acc_test_mul[i] = pca_test_acc
         pca_loss_test_mul[i] = pca_test_loss
 
-    with open(f"./pickles/Results_D={args.data}_N={N}_R={runs}.p", "wb") as f:
+    with open(f"./pickles/Results_D={args.data}{int(args.offset) * '_offset'}{int(args.noise) * '_noise'}_N={N}_R={runs}.p", "wb") as f:
         results = [r_list_pca, r_list_lago, pca_acc_mul, pca_loss_mul, eq_acc_mul, eq_loss_mul, pca_acc_test_mul, pca_loss_test_mul, eq_acc_test_mul, eq_loss_test_mul]
         pickle.dump(results, f)
 
